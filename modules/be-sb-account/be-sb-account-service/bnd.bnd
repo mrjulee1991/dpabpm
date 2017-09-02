@@ -1,0 +1,8 @@
+Bundle-Name: be-sb-account-service
+Bundle-SymbolicName: be.sb.account.service
+Bundle-Version: 1.0.0
+Liferay-Require-SchemaVersion: 1.0.0
+Liferay-Service: true
+Export-Package: \
+	com.dpabpm.account.service.persistence,\
+	com.dpabpm.account.exception

@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 7.0.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_7_0_0.dtd">
+
+<service-builder package-path="com.dpabpm.account">
+	<author>phucnv</author>
+	<namespace>account</namespace>
+	
+	<entity name="Account" local-service="true" remote-service="true" table="dpabpm_account">
+
+		<!-- PK fields -->
+
+		<column name="id" primary="true" type="long" />
+		<column name="uuid" type="String" />
+
+		<!-- Group instance -->
+
+		<column name="groupId" type="long" />
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="userId" type="long" />
+		<column name="userName" type="String" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+
+		<!-- Other fields -->
+
+		<column name="firstName" type="String" />
+		<column name="lastName" type="String" />
+		<column name="fullName" type="String" />
+		<column name="gender" type="int" /> 		<!-- female = 0, male = 1 -->
+		<column name="birthdate" type="Date" />
+		<column name="address" type="String" />
+		<column name="telNo" type="String" />
+		<column name="email" type="String" />
+		<column name="status" type="int" />
+		<column name="mappingUserId" type="long" />
+
+		<!-- Order -->
+
+		<order by="asc">
+			<order-column name="firstName" />
+		</order>
+
+		<!-- Finder methods -->
+
+		<finder name="Uuid" return-type="Account">
+			<finder-column name="uuid" />
+		</finder>
+		<finder name="TelNo" return-type="Account">
+			<finder-column name="telNo" />
+		</finder>
+		
+		<finder name="Email" return-type="Account">
+			<finder-column name="email" />
+		</finder>
+		
+		<!-- References -->
+
+		<reference entity="User" package-path="com.liferay.portal" />
+	</entity>
+</service-builder>
