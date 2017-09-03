@@ -18,7 +18,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import com.dpabpm.account.mail.SendMailMessageUtils;
+import com.dpabpm.account.mail.SendEmailMessageUtil;
 import com.dpabpm.account.model.Account;
 import com.dpabpm.account.service.base.AccountLocalServiceBaseImpl;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -121,7 +121,7 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 		throws SystemException, PortalException {
 
 		String templateFileURL =
-			"/com/dpabpm/resources/mail/templates/account_created_notification.mt";
+			SendEmailMessageUtil.PATH_ACCOUNT_CREATED_NOTIFICATION;
 
 		String[] replaceParameters = {
 			"[$TO_NAME$]", "[$USER_PASSWORD$]"
@@ -130,16 +130,17 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 			account.getFullName(), mappingUser.getPasswordUnencrypted()
 		};
 
-		String mailBody = SendMailMessageUtils.getMailBodyFromTemplateFile(
+		String mailBody = SendEmailMessageUtil.getEmailBodyFromTemplateFile(
 			templateFileURL, replaceParameters, replaceVariables);
 
-		SendMailMessageUtils.send(
-			"aaa@gmail.com", account.getEmail(), "Confirm registration ",
-			mailBody, true);
+		SendEmailMessageUtil.send(
+			SendEmailMessageUtil.SENDER_EMAIL_ADDRESS, account.getEmail(),
+			"Confirm registration", mailBody, true);
 
 		_log.info(
 			"8==================o sended confirmation mail to account id: " +
 				account.getId());
+
 	}
 
 	private User _addUserWithWorkflow(

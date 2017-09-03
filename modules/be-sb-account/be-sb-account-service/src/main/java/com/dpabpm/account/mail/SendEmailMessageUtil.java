@@ -25,9 +25,13 @@ import com.liferay.util.ContentUtil;
  * @author phucnv
  * @date Sep 3, 2017
  */
-public class SendMailMessageUtils {
+public class SendEmailMessageUtil {
 
-	public static String getMailBodyFromTemplateFile(
+	public static final String PATH_ACCOUNT_CREATED_NOTIFICATION =
+		"/com/dpabpm/resources/mail/templates/account_created_notification.mt";
+	public static final String SENDER_EMAIL_ADDRESS = "nvp191@gmail.com";
+
+	public static String getEmailBodyFromTemplateFile(
 		String templateFileURL, String[] replaceParameters,
 		String[] replaceVariables) {
 
@@ -61,20 +65,21 @@ public class SendMailMessageUtils {
 	}
 
 	public static void send(
-		String formAdress, String toAdress, String subject, String body,
-		boolean isHTMLFormat)
+		String senderEmailAddress, String receiverEmailAddress, String subject,
+		String emailBody, boolean isHTMLFormat)
 		throws SystemException, PortalException {
 
 		User user = getAdmin();
 		if (Validator.isNotNull(user)) {
 			SubscriptionSender subscriptionSender = new SubscriptionSender();
-			subscriptionSender.setBody(body);
+			subscriptionSender.setBody(emailBody);
 			subscriptionSender.setCompanyId(user.getCompanyId());
 			subscriptionSender.setCurrentUserId(user.getUserId());
 			subscriptionSender.setHtmlFormat(isHTMLFormat);
-			subscriptionSender.setFrom(formAdress, "Admin");
+			subscriptionSender.setFrom(senderEmailAddress, "Admin");
 			subscriptionSender.setSubject(subject);
-			subscriptionSender.addRuntimeSubscribers(toAdress, "You");
+			subscriptionSender.addRuntimeSubscribers(
+				receiverEmailAddress, "You");
 			subscriptionSender.setMailId("User", new Object[] {
 				Long.valueOf(user.getUserId())
 			});
@@ -141,5 +146,5 @@ public class SendMailMessageUtils {
 		return null;
 	}
 
-	private static Log _log = LogFactoryUtil.getLog(SendMailMessageUtils.class);
+	private static Log _log = LogFactoryUtil.getLog(SendEmailMessageUtil.class);
 }
