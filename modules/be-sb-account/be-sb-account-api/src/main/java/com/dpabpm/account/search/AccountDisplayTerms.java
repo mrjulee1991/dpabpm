@@ -11,6 +11,7 @@ import javax.portlet.ActionRequest;
 
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.WebKeys;
 
 /**
@@ -52,7 +53,6 @@ public class AccountDisplayTerms {
 
 		_firstName = ParamUtil.getString(request, FIRST_NAME);
 		_lastName = ParamUtil.getString(request, LAST_NAME);
-		_fullName = ParamUtil.getString(request, FULL_NAME);
 		_gender = ParamUtil.getInteger(request, GENDER);
 		_birthdate = ParamUtil.getDate(
 			request, BIRTH_DATE, SimpleDateFormat.getDateInstance());
@@ -61,6 +61,8 @@ public class AccountDisplayTerms {
 		_email = ParamUtil.getString(request, EMAIL);
 		_status = ParamUtil.getInteger(request, STATUS);
 		_mappingUserId = themeDisplay.getUserId();
+
+		_fullName = _lastName + StringPool.SPACE + _firstName;
 
 	}
 

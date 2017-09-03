@@ -14,12 +14,15 @@
 
 package com.dpabpm.account.service.impl;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import com.dpabpm.account.mail.SendMailMessageUtils;
 import com.dpabpm.account.model.Account;
 import com.dpabpm.account.service.base.AccountLocalServiceBaseImpl;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
@@ -107,18 +110,36 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 			_log.info(
 				"8=================o mapping user id created: " +
 					mappingUser.getUserId());
-			_log.info(
-				"8=================o " + mappingUser.getPasswordUnencrypted());
 
-			// TODO turn off portal sender and send mail
-			_sendConfirmationMail();
+			_sendConfirmationMail(account, mappingUser);
 		}
 
 		return account;
 	}
 
-	private void _sendConfirmationMail() {
+	private void _sendConfirmationMail(Account account, User mappingUser)
+		throws SystemException, PortalException {
 
+		String templateFileURL =
+			"/com/dpabpm/resources/mail/templates/account_created_notification.mt";
+
+		String[] replaceParameters = {
+			"[$TO_NAME$]", "[$USER_PASSWORD$]"
+		};
+		String[] replaceVariables = {
+			account.getFullName(), mappingUser.getPasswordUnencrypted()
+		};
+
+		String mailBody = SendMailMessageUtils.getMailBodyFromTemplateFile(
+			templateFileURL, replaceParameters, replaceVariables);
+
+		SendMailMessageUtils.send(
+			"aaa@gmail.com", account.getEmail(), "Confirm registration ",
+			mailBody, true);
+
+		_log.info(
+			"8==================o sended confirmation mail to account id: " +
+				account.getId());
 	}
 
 	private User _addUserWithWorkflow(
@@ -131,7 +152,7 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 		boolean autoScreenName = true;
 		boolean autoPassword = true;
 		boolean male = gender > 0;
-		boolean sendEmail = true;
+		boolean sendEmail = false;
 
 		String password1 = StringPool.BLANK;
 		String password2 = StringPool.BLANK;
@@ -145,9 +166,12 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 		long suffixId = 0;
 		long creatorUserId = userId;
 
-		int birthdayDay = 19;
-		int birthdayMonth = 9;
-		int birthdayYear = 1991;
+		Calendar bdc = Calendar.getInstance();
+		bdc.setTime(birthdate);
+
+		int birthdayDay = bdc.get(Calendar.DAY_OF_MONTH);
+		int birthdayMonth = bdc.get(Calendar.MONTH);
+		int birthdayYear = bdc.get(Calendar.YEAR);
 
 		long[] roleIds = null;
 		long[] userGroupIds = null;
