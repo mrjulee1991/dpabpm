@@ -4,11 +4,11 @@
 
 package com.dpabpm.account.search;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.portlet.ActionRequest;
 
+import com.dpabpm.util.datetime.DateTimeUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringPool;
@@ -33,11 +33,17 @@ public class AccountDisplayTerms {
 	public static final String FULL_NAME = "fullName";
 	public static final String GENDER = "gender";
 	public static final String BIRTH_DATE = "birthdate";
+	public static final String BIRTH_DAY = "birthday";
+	public static final String BIRTH_MONTH = "birthmonth";
+	public static final String BIRTH_YEAR = "birthyear";
 	public static final String ADDRESS = "address";
 	public static final String TEL_NO = "telNo";
 	public static final String EMAIL = "email";
 	public static final String STATUS = "status";
 	public static final String MAPPING_USER_ID = "mappingUserId";
+
+	public static final String PASSWORD_1 = "password1";
+	public static final String PASSWORD_2 = "password2";
 
 	public AccountDisplayTerms(ActionRequest request) {
 
@@ -54,15 +60,21 @@ public class AccountDisplayTerms {
 		_firstName = ParamUtil.getString(request, FIRST_NAME);
 		_lastName = ParamUtil.getString(request, LAST_NAME);
 		_gender = ParamUtil.getInteger(request, GENDER);
-		_birthdate = ParamUtil.getDate(
-			request, BIRTH_DATE, SimpleDateFormat.getDateInstance());
+		_birthday = ParamUtil.getInteger(request, BIRTH_DAY);
+		_birthmonth = ParamUtil.getInteger(request, BIRTH_MONTH);
+		_birthyear = ParamUtil.getInteger(request, BIRTH_YEAR);
 		_address = ParamUtil.getString(request, ADDRESS);
 		_telNo = ParamUtil.getString(request, TEL_NO);
 		_email = ParamUtil.getString(request, EMAIL);
 		_status = ParamUtil.getInteger(request, STATUS);
 		_mappingUserId = themeDisplay.getUserId();
 
+		_password1 = ParamUtil.getString(request, PASSWORD_1);
+		_password2 = ParamUtil.getString(request, PASSWORD_2);
+
 		_fullName = _lastName + StringPool.SPACE + _firstName;
+
+		_birthdate = DateTimeUtil.getDate(_birthday, _birthmonth, _birthyear);
 
 	}
 
@@ -77,12 +89,20 @@ public class AccountDisplayTerms {
 	private String _lastName;
 	private String _fullName;
 	private int _gender;
+
 	private Date _birthdate;
+	private int _birthday;
+	private int _birthmonth;
+	private int _birthyear;
+
 	private String _address;
 	private String _telNo;
 	private String _email;
 	private int _status;
 	private long _mappingUserId;
+
+	private String _password1;
+	private String _password2;
 
 	public String getUuid() {
 
@@ -232,6 +252,56 @@ public class AccountDisplayTerms {
 	public void setMappingUserId(long mappingUserId) {
 
 		this._mappingUserId = mappingUserId;
+	}
+
+	public String getPassword1() {
+
+		return _password1;
+	}
+
+	public void setPassword1(String password1) {
+
+		this._password1 = password1;
+	}
+
+	public String getPassword2() {
+
+		return _password2;
+	}
+
+	public void setPassword2(String password2) {
+
+		this._password2 = password2;
+	}
+
+	public int getBirthday() {
+
+		return _birthday;
+	}
+
+	public void setBirthday(int _birthday) {
+
+		this._birthday = _birthday;
+	}
+
+	public int getBirthmonth() {
+
+		return _birthmonth;
+	}
+
+	public void setBirthmonth(int _birthmonth) {
+
+		this._birthmonth = _birthmonth;
+	}
+
+	public int getBirthyear() {
+
+		return _birthyear;
+	}
+
+	public void setBirthyear(int _birthyear) {
+
+		this._birthyear = _birthyear;
 	}
 
 }

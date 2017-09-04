@@ -45,7 +45,7 @@ public class AccountMgtPortlet extends MVCPortlet {
 
 			AccountDisplayTerms accountTerms = new AccountDisplayTerms(request);
 
-			AccountLocalServiceUtil.updateAccount(
+			AccountLocalServiceUtil.createAccount(
 				accountTerms.getUuid(), accountTerms.getGroupId(),
 				accountTerms.getCompanyId(), accountTerms.getUserId(),
 				accountTerms.getUserName(), accountTerms.getLastName(),
@@ -53,7 +53,8 @@ public class AccountMgtPortlet extends MVCPortlet {
 				accountTerms.getGender(), accountTerms.getBirthdate(),
 				accountTerms.getAddress(), accountTerms.getTelNo(),
 				accountTerms.getEmail(), accountTerms.getStatus(),
-				accountTerms.getMappingUserId(), serviceContext);
+				accountTerms.getMappingUserId(), accountTerms.getPassword1(),
+				accountTerms.getPassword2(), serviceContext);
 		}
 		catch (Exception e) {
 			_log.error(e);

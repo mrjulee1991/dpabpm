@@ -29,6 +29,8 @@ public class SendEmailMessageUtil {
 
 	public static final String PATH_ACCOUNT_CREATED_NOTIFICATION =
 		"/com/dpabpm/resources/mail/templates/account_created_notification.mt";
+
+	// TODO config sender email address
 	public static final String SENDER_EMAIL_ADDRESS = "nvp191@gmail.com";
 
 	public static String getEmailBodyFromTemplateFile(

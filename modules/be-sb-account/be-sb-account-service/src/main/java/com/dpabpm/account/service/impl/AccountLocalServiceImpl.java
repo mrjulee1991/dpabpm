@@ -25,10 +25,11 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.TicketConstants;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.TicketLocalServiceUtil;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 
 import aQute.bnd.annotation.ProviderType;
@@ -55,34 +56,28 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 	 */
 
 	@Override
-	public Account updateAccount(
+	public Account createAccount(
 		String uuid, long groupId, long companyId, long userId, String userName,
 		String lastName, String firstName, String fullName, int gender,
 		Date birthdate, String address, String telNo, String email, int status,
-		long mappingUserId, ServiceContext serviceContext)
+		long mappingUserId, String password1, String password2,
+		ServiceContext serviceContext)
 		throws PortalException {
+
+		long id = counterLocalService.increment(Account.class.getName());
+		Account account = accountPersistence.create(id);
 
 		Date now = new Date();
 
-		Account account = null;
-		User mappingUser = null;
-
-		if (Validator.isNotNull(uuid)) {
-			account = accountPersistence.findByUuid(uuid);
-			mappingUser = userPersistence.findByPrimaryKey(mappingUserId);
-		}
-		else {
-			long id = counterLocalService.increment(Account.class.getName());
-			account = accountPersistence.create(id);
-			account.setUuid(PortalUUIDUtil.generate());
-			account.setCreateDate(now);
-		}
-		account.setModifiedDate(now);
+		account.setUuid(PortalUUIDUtil.generate());
 
 		account.setGroupId(groupId);
 		account.setCompanyId(companyId);
 		account.setUserId(userId);
 		account.setUserName(userName);
+		account.setCreateDate(now);
+		account.setModifiedDate(now);
+
 		account.setLastName(lastName);
 		account.setFirstName(firstName);
 		account.setFullName(fullName);
@@ -98,23 +93,42 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 
 		_log.info("8=================o account id created: " + account.getId());
 
-		if (Validator.isNotNull(uuid)) {
-			// TODO update mappingUser
-		}
-		else {
-			mappingUser = _addUserWithWorkflow(
-				uuid, groupId, companyId, userId, userName, lastName, firstName,
-				fullName, gender, birthdate, address, telNo, email, status,
-				mappingUserId, serviceContext);
+		// create mapping user
+		User mappingUser = _addUserWithWorkflow(
+			uuid, groupId, companyId, userId, userName, lastName, firstName,
+			fullName, gender, birthdate, address, telNo, email, status,
+			mappingUserId, password1, password2, serviceContext);
 
-			_log.info(
-				"8=================o mapping user id created: " +
-					mappingUser.getUserId());
+		_log.info(
+			"8=================o mapping user id created: " +
+				mappingUser.getUserId());
 
-			_sendConfirmationMail(account, mappingUser);
-		}
+		// send confirmation mail
+		_sendConfirmationMail(account, mappingUser);
+
+		// add ticket for account
+		// TODO configure overdue time and time unit
+		_addTicket(account, 5, Calendar.MINUTE, serviceContext);
 
 		return account;
+	}
+
+	private void _addTicket(
+		Account account, int overdueTime, int timeUnit,
+		ServiceContext serviceContext) {
+
+		Calendar c = Calendar.getInstance();
+		c.setTime(new Date());
+		c.add(timeUnit, overdueTime);
+
+		Date expirationDate = c.getTime();
+
+		TicketLocalServiceUtil.addDistinctTicket(
+			account.getCompanyId(), account.getClass().getName(),
+			account.getMappingUserId(), TicketConstants.TYPE_PASSWORD,
+			StringPool.BLANK, expirationDate, serviceContext);
+
+		_log.info("8============o add ticket for account: " + account.getId());
 	}
 
 	private void _sendConfirmationMail(Account account, User mappingUser)
@@ -147,16 +161,15 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 		String uuid, long groupId, long companyId, long userId, String userName,
 		String lastName, String firstName, String fullName, int gender,
 		Date birthdate, String address, String telNo, String email, int status,
-		long mappingUserId, ServiceContext serviceContext)
+		long mappingUserId, String password1, String password2,
+		ServiceContext serviceContext)
 		throws PortalException {
 
 		boolean autoScreenName = true;
-		boolean autoPassword = true;
-		boolean male = gender > 0;
+		boolean autoPassword = false;
 		boolean sendEmail = false;
+		boolean male = gender > 0;
 
-		String password1 = StringPool.BLANK;
-		String password2 = StringPool.BLANK;
 		String openId = StringPool.BLANK;
 		String screenName = StringPool.BLANK;
 		String middleName = StringPool.BLANK;
