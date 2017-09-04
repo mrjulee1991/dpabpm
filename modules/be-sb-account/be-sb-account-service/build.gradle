@@ -6,6 +6,7 @@ dependencies {
 	
 	compileOnly group: "com.liferay.portal", name: "com.liferay.util.java", version: "2.2.0"
 	
+	compileOnly project(":modules:be-api-util")
 	compileOnly project(":modules:be-sb-account:be-sb-account-api")
 }
 

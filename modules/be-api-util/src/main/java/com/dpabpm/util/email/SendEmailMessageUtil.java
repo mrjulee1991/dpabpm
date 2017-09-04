@@ -2,7 +2,7 @@
  * 
  */
 
-package com.dpabpm.account.mail;
+package com.dpabpm.util.email;
 
 import java.util.Iterator;
 

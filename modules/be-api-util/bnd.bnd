@@ -1,4 +1,7 @@
 Bundle-Name: be-api-util
 Bundle-SymbolicName: be.api.util
 Bundle-Version: 1.0.0
-Export-Package: com.dpabpm.util.datetime
+Export-Package: \
+	com.dpabpm.util.datetime,\
+	com.dpabpm.util.email
+-includeresource: @com.liferay.util.java-2.2.0.jar!/com/liferay/util/ContentUtil.class

@@ -18,9 +18,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import com.dpabpm.account.mail.SendEmailMessageUtil;
 import com.dpabpm.account.model.Account;
 import com.dpabpm.account.service.base.AccountLocalServiceBaseImpl;
+import com.dpabpm.util.email.SendEmailMessageUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
