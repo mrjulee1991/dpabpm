@@ -1,3 +1,4 @@
 Bundle-Name: be-api-util
 Bundle-SymbolicName: be.api.util
 Bundle-Version: 1.0.0
+Export-Package: com.dpabpm.util.datetime

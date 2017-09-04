@@ -1,9 +1,10 @@
 Bundle-Name: be-sb-mappingfile-api
 Bundle-SymbolicName: be.sb.mappingfile.api
 Bundle-Version: 1.0.0
-Export-Package:\
-	be.sb.mappingfile.exception,\
-	be.sb.mappingfile.model,\
-	be.sb.mappingfile.service,\
-	be.sb.mappingfile.service.persistence
+Export-Package: \
+	com.dpabpm.mappingfile.exception,\
+	com.dpabpm.mappingfile.model,\
+	com.dpabpm.mappingfile.search,\
+	com.dpabpm.mappingfile.service,\
+	com.dpabpm.mappingfile.service.persistence
 -includeresource: META-INF/service.xml=../be-sb-mappingfile-service/service.xml

@@ -1,9 +1,10 @@
 Bundle-Name: be-sb-account-api
 Bundle-SymbolicName: be.sb.account.api
 Bundle-Version: 1.0.0
-Export-Package:\
-	be.sb.account.exception,\
-	be.sb.account.model,\
-	be.sb.account.service,\
-	be.sb.account.service.persistence
 -includeresource: META-INF/service.xml=../be-sb-account-service/service.xml
+Export-Package: \
+	com.dpabpm.account.exception,\
+	com.dpabpm.account.model,\
+	com.dpabpm.account.service,\
+	com.dpabpm.account.search,\
+	com.dpabpm.account.service.persistence
