@@ -2,7 +2,7 @@
  * 
  */
 
-package com.dpabpm.util.email;
+package com.dpabpm.util.mail;
 
 import java.util.Iterator;
 
@@ -25,10 +25,10 @@ import com.liferay.util.ContentUtil;
  * @author phucnv
  * @date Sep 3, 2017
  */
-public class SendEmailMessageUtil {
+public class SendMailMessageUtil {
 
 	public static final String PATH_ACCOUNT_CREATED_NOTIFICATION =
-		"/com/dpabpm/resources/mail/templates/account_created_notification.mt";
+		"/com/dpabpm/util/mail/resources/account_created_notification.mt";
 
 	// TODO config sender email address
 	public static final String SENDER_EMAIL_ADDRESS = "nvp191@gmail.com";
@@ -148,5 +148,5 @@ public class SendEmailMessageUtil {
 		return null;
 	}
 
-	private static Log _log = LogFactoryUtil.getLog(SendEmailMessageUtil.class);
+	private static Log _log = LogFactoryUtil.getLog(SendMailMessageUtil.class);
 }

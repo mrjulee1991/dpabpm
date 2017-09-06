@@ -259,9 +259,6 @@ public class DateTimeUtil {
 
 			calendar.setTime(date);
 			year = calendar.get(Calendar.YEAR);
-
-			calendar.setTime(date);
-			year = calendar.get(Calendar.YEAR);
 		}
 
 		return year;

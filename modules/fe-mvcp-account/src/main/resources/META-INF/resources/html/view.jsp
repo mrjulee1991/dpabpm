@@ -42,7 +42,7 @@
 				</aui:col>
 				
 				<aui:col span="3">
-					<aui:input name="<%= AccountDisplayTerms.BIRTH_YEAR %>" type="number" min="1900" max="<%= new Date().getYear() %>"/>
+					<aui:input name="<%= AccountDisplayTerms.BIRTH_YEAR %>" type="number" min="1900" max="2010"/>
 				</aui:col>
 			</aui:row>
 			

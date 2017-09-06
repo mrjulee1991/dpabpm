@@ -20,7 +20,7 @@ import java.util.Locale;
 
 import com.dpabpm.account.model.Account;
 import com.dpabpm.account.service.base.AccountLocalServiceBaseImpl;
-import com.dpabpm.util.email.SendEmailMessageUtil;
+import com.dpabpm.util.mail.SendMailMessageUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
@@ -101,7 +101,8 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 
 		_log.info(
 			"8=================o mapping user id created: " +
-				mappingUser.getUserId());
+				mappingUser.getUserId() + "/" +
+				mappingUser.getPasswordUnencrypted());
 
 		// send confirmation mail
 		_sendConfirmationMail(account, mappingUser);
@@ -135,7 +136,7 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 		throws SystemException, PortalException {
 
 		String templateFileURL =
-			SendEmailMessageUtil.PATH_ACCOUNT_CREATED_NOTIFICATION;
+			SendMailMessageUtil.PATH_ACCOUNT_CREATED_NOTIFICATION;
 
 		String[] replaceParameters = {
 			"[$TO_NAME$]", "[$USER_PASSWORD$]"
@@ -144,16 +145,16 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 			account.getFullName(), mappingUser.getPasswordUnencrypted()
 		};
 
-		String mailBody = SendEmailMessageUtil.getEmailBodyFromTemplateFile(
+		String mailBody = SendMailMessageUtil.getEmailBodyFromTemplateFile(
 			templateFileURL, replaceParameters, replaceVariables);
 
-		SendEmailMessageUtil.send(
-			SendEmailMessageUtil.SENDER_EMAIL_ADDRESS, account.getEmail(),
+		SendMailMessageUtil.send(
+			SendMailMessageUtil.SENDER_EMAIL_ADDRESS, account.getEmail(),
 			"Confirm registration", mailBody, true);
 
 		_log.info(
-			"8==================o sended confirmation mail to account id: " +
-				account.getId());
+			"8==================o sended confirmation mail to: " +
+				account.getEmail());
 
 	}
 
