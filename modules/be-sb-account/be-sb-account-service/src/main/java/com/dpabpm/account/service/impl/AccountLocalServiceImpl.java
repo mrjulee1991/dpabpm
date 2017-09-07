@@ -55,6 +55,35 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 	 * account local service.
 	 */
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.dpabpm.account.service.AccountLocalService#verifyMail(long)
+	 */
+	@Override
+	public Account verifyMail(long accountId)
+		throws PortalException {
+
+		Account account = accountPersistence.findByPrimaryKey(accountId);
+		User user =
+			userPersistence.findByPrimaryKey(account.getMappingUserId());
+
+		user.setEmailAddressVerified(true);
+
+		userPersistence.update(user);
+
+		return account;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * com.dpabpm.account.service.AccountLocalService#createAccount(java.lang.
+	 * String, long, long, long, java.lang.String, java.lang.String,
+	 * java.lang.String, java.lang.String, int, java.util.Date,
+	 * java.lang.String, java.lang.String, java.lang.String, int, long,
+	 * java.lang.String, java.lang.String,
+	 * com.liferay.portal.kernel.service.ServiceContext)
+	 */
 	@Override
 	public Account createAccount(
 		String uuid, long groupId, long companyId, long userId, String userName,
@@ -114,6 +143,12 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 		return account;
 	}
 
+	/**
+	 * @param account
+	 * @param overdueTime
+	 * @param timeUnit
+	 * @param serviceContext
+	 */
 	private void _addTicket(
 		Account account, int overdueTime, int timeUnit,
 		ServiceContext serviceContext) {
@@ -132,8 +167,14 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 		_log.info("8============o add ticket for account: " + account.getId());
 	}
 
+	/**
+	 * @param account
+	 * @param mappingUser
+	 * @throws SystemException
+	 * @throws PortalException
+	 */
 	private void _sendConfirmationMail(Account account, User mappingUser)
-		throws SystemException, PortalException {
+		throws PortalException {
 
 		String templateFileURL =
 			SendMailMessageUtil.PATH_ACCOUNT_CREATED_NOTIFICATION;
@@ -158,6 +199,28 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 
 	}
 
+	/**
+	 * @param uuid
+	 * @param groupId
+	 * @param companyId
+	 * @param userId
+	 * @param userName
+	 * @param lastName
+	 * @param firstName
+	 * @param fullName
+	 * @param gender
+	 * @param birthdate
+	 * @param address
+	 * @param telNo
+	 * @param email
+	 * @param status
+	 * @param mappingUserId
+	 * @param password1
+	 * @param password2
+	 * @param serviceContext
+	 * @return
+	 * @throws PortalException
+	 */
 	private User _addUserWithWorkflow(
 		String uuid, long groupId, long companyId, long userId, String userName,
 		String lastName, String firstName, String fullName, int gender,

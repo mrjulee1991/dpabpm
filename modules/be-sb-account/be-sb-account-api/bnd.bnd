@@ -7,4 +7,5 @@ Export-Package: \
 	com.dpabpm.account.model,\
 	com.dpabpm.account.service,\
 	com.dpabpm.account.search,\
-	com.dpabpm.account.service.persistence
+	com.dpabpm.account.service.persistence,\
+	com.dpabpm.account.business

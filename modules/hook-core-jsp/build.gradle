@@ -6,6 +6,6 @@ dependencies {
 	compileOnly group: "jstl", name: "jstl", version: "1.2"
 	compileOnly group: "org.osgi", name: "osgi.cmpn", version: "6.0.0"
 	
-	compileOnly project(":modules:be-sb-account:be-sb-account-api")
-	compileOnly project(":modules:be-sb-account:be-sb-account-service")
+	compileOnly group: 'org.osgi', name: 'org.osgi.core', version: '4.3.0'
+	compileOnly group: 'com.liferay.portal', name: 'com.liferay.portal.impl', version: '2.0.0'
 }
