@@ -25,10 +25,14 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.model.Ticket;
 import com.liferay.portal.kernel.model.TicketConstants;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.TicketLocalServiceUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 
@@ -68,8 +72,12 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 			userPersistence.findByPrimaryKey(account.getMappingUserId());
 
 		user.setEmailAddressVerified(true);
+		user.setReminderQueryQuestion(StringPool.SLASH);
+		user.setReminderQueryAnswer(StringPool.SLASH);
 
 		userPersistence.update(user);
+
+		_log.info("8===============o verified mail: " + account.getEmail());
 
 		return account;
 	}
@@ -86,11 +94,10 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 	 */
 	@Override
 	public Account createAccount(
-		String uuid, long groupId, long companyId, long userId, String userName,
+		long groupId, long companyId, long userId, String userName,
 		String lastName, String firstName, String fullName, int gender,
 		Date birthdate, String address, String telNo, String email, int status,
-		long mappingUserId, String password1, String password2,
-		ServiceContext serviceContext)
+		String password1, String password2, ServiceContext serviceContext)
 		throws PortalException {
 
 		long id = counterLocalService.increment(Account.class.getName());
@@ -116,29 +123,29 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 		account.setTelNo(telNo);
 		account.setEmail(email);
 		account.setStatus(status);
-		account.setMappingUserId(mappingUserId);;
-
-		account = accountPersistence.update(account);
 
 		_log.info("8=================o account id created: " + account.getId());
 
 		// create mapping user
 		User mappingUser = _addUserWithWorkflow(
-			uuid, groupId, companyId, userId, userName, lastName, firstName,
-			fullName, gender, birthdate, address, telNo, email, status,
-			mappingUserId, password1, password2, serviceContext);
+			companyId, userId, userName, lastName, firstName, gender, birthdate,
+			email, password1, password2, serviceContext);
+
+		account.setMappingUserId(mappingUser.getUserId());;
+
+		account = accountPersistence.update(account);
 
 		_log.info(
 			"8=================o mapping user id created: " +
 				mappingUser.getUserId() + "/" +
 				mappingUser.getPasswordUnencrypted());
 
-		// send confirmation mail
-		_sendConfirmationMail(account, mappingUser);
-
 		// add ticket for account
 		// TODO configure overdue time and time unit
-		_addTicket(account, 5, Calendar.MINUTE, serviceContext);
+		Ticket ticket = _addTicket(account, 5, Calendar.MINUTE, serviceContext);
+
+		// send confirmation mail
+		_sendConfirmationMail(account, ticket);
 
 		return account;
 	}
@@ -149,7 +156,7 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 	 * @param timeUnit
 	 * @param serviceContext
 	 */
-	private void _addTicket(
+	private Ticket _addTicket(
 		Account account, int overdueTime, int timeUnit,
 		ServiceContext serviceContext) {
 
@@ -159,12 +166,13 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 
 		Date expirationDate = c.getTime();
 
-		TicketLocalServiceUtil.addDistinctTicket(
-			account.getCompanyId(), account.getClass().getName(),
-			account.getMappingUserId(), TicketConstants.TYPE_PASSWORD,
-			StringPool.BLANK, expirationDate, serviceContext);
-
 		_log.info("8============o add ticket for account: " + account.getId());
+
+		return TicketLocalServiceUtil.addDistinctTicket(
+			account.getCompanyId(), account.getClass().getName(),
+			account.getId(), TicketConstants.TYPE_PASSWORD, StringPool.BLANK,
+			expirationDate, serviceContext);
+
 	}
 
 	/**
@@ -173,17 +181,19 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 	 * @throws SystemException
 	 * @throws PortalException
 	 */
-	private void _sendConfirmationMail(Account account, User mappingUser)
+	private void _sendConfirmationMail(Account account, Ticket ticket)
 		throws PortalException {
 
 		String templateFileURL =
 			SendMailMessageUtil.PATH_ACCOUNT_CREATED_NOTIFICATION;
 
+		String verificationURL = _generateVerificationURL(account, ticket);
+
 		String[] replaceParameters = {
-			"[$TO_NAME$]", "[$USER_PASSWORD$]"
+			"[$TO_NAME$]", "[$VERIFICATION_URL$]"
 		};
 		String[] replaceVariables = {
-			account.getFullName(), mappingUser.getPasswordUnencrypted()
+			account.getFullName(), verificationURL
 		};
 
 		String mailBody = SendMailMessageUtil.getEmailBodyFromTemplateFile(
@@ -200,21 +210,36 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 	}
 
 	/**
-	 * @param uuid
-	 * @param groupId
+	 * @param account
+	 * @param ticket
+	 * @return
+	 * @throws PortalException
+	 */
+	private String _generateVerificationURL(Account account, Ticket ticket)
+		throws PortalException {
+
+		Company company =
+			CompanyLocalServiceUtil.getCompany(account.getCompanyId());
+
+		StringBuilder portalURL = new StringBuilder(
+			PortalUtil.getPortalURL(
+				company.getVirtualHostname(),
+				PortalUtil.getPortalServerPort(false), false));
+
+		portalURL.append("/o/verify-mail?key=" + ticket.getKey());
+
+		return portalURL.toString();
+	}
+
+	/**
 	 * @param companyId
 	 * @param userId
 	 * @param userName
 	 * @param lastName
 	 * @param firstName
-	 * @param fullName
 	 * @param gender
 	 * @param birthdate
-	 * @param address
-	 * @param telNo
 	 * @param email
-	 * @param status
-	 * @param mappingUserId
 	 * @param password1
 	 * @param password2
 	 * @param serviceContext
@@ -222,27 +247,13 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 	 * @throws PortalException
 	 */
 	private User _addUserWithWorkflow(
-		String uuid, long groupId, long companyId, long userId, String userName,
-		String lastName, String firstName, String fullName, int gender,
-		Date birthdate, String address, String telNo, String email, int status,
-		long mappingUserId, String password1, String password2,
-		ServiceContext serviceContext)
+		long companyId, long userId, String userName, String lastName,
+		String firstName, int gender, Date birthdate, String email,
+		String password1, String password2, ServiceContext serviceContext)
 		throws PortalException {
 
-		boolean autoScreenName = true;
-		boolean autoPassword = false;
-		boolean sendEmail = false;
-		boolean male = gender > 0;
-
-		String openId = StringPool.BLANK;
-		String screenName = StringPool.BLANK;
-		String middleName = StringPool.BLANK;
-		String jobTitle = StringPool.BLANK;
-
-		long facebookId = 0;
-		long prefixId = 0;
-		long suffixId = 0;
-		long creatorUserId = userId;
+		User user = userPersistence.create(
+			counterLocalService.increment(User.class.getName()));
 
 		Calendar bdc = Calendar.getInstance();
 		bdc.setTime(birthdate);
@@ -251,19 +262,16 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 		int birthdayMonth = bdc.get(Calendar.MONTH);
 		int birthdayYear = bdc.get(Calendar.YEAR);
 
-		long[] roleIds = null;
-		long[] userGroupIds = null;
-		long[] organizationIds = null;
-		long[] groupIds = null;
-
 		Locale locale = serviceContext.getLocale();
 
-		return userLocalService.addUserWithWorkflow(
-			creatorUserId, companyId, autoPassword, password1, password2,
-			autoScreenName, screenName, email, facebookId, openId, locale,
-			firstName, middleName, lastName, prefixId, suffixId, male,
-			birthdayMonth, birthdayDay, birthdayYear, jobTitle, groupIds,
-			organizationIds, roleIds, userGroupIds, sendEmail, serviceContext);
+		user = userLocalService.addUserWithWorkflow(
+			userId, companyId, false, password1, password2, true,
+			StringPool.BLANK, email, 0, StringPool.BLANK, locale, firstName,
+			StringPool.BLANK, lastName, 0, 0, gender > 0, birthdayMonth,
+			birthdayDay, birthdayYear, StringPool.BLANK, null, null, null, null,
+			false, serviceContext);
+
+		return user;
 	}
 
 	private Log _log = LogFactoryUtil.getLog(this.getClass());

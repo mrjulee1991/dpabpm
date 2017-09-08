@@ -24,7 +24,7 @@ import com.liferay.portal.kernel.util.PortalUtil;
  * @date Sep 2, 2017
  */
 @Component(immediate = true, property = {
-	"com.liferay.portlet.display-category=category.sample",
+	"com.liferay.portlet.display-category=category.dpabpm.account",
 	"com.liferay.portlet.instanceable=true",
 	"javax.portlet.display-name=Account mgt Portlet",
 	"javax.portlet.init-param.template-path=/",
@@ -48,14 +48,13 @@ public class AccountRegistrationPortlet extends MVCPortlet {
 				PortalUtil.getHttpServletRequest(request));
 
 			AccountBusiness.createAccount(
-				accountTerms.getUuid(), accountTerms.getGroupId(),
-				accountTerms.getCompanyId(), accountTerms.getUserId(),
-				accountTerms.getUserName(), accountTerms.getLastName(),
-				accountTerms.getFirstName(), accountTerms.getFullName(),
-				accountTerms.getGender(), accountTerms.getBirthdate(),
-				accountTerms.getAddress(), accountTerms.getTelNo(),
-				accountTerms.getEmail(), accountTerms.getStatus(),
-				accountTerms.getMappingUserId(), accountTerms.getPassword1(),
+				accountTerms.getGroupId(), accountTerms.getCompanyId(),
+				accountTerms.getUserId(), accountTerms.getUserName(),
+				accountTerms.getLastName(), accountTerms.getFirstName(),
+				accountTerms.getFullName(), accountTerms.getGender(),
+				accountTerms.getBirthdate(), accountTerms.getAddress(),
+				accountTerms.getTelNo(), accountTerms.getEmail(),
+				accountTerms.getStatus(), accountTerms.getPassword1(),
 				accountTerms.getPassword2(), serviceContext);
 		}
 		catch (Exception e) {

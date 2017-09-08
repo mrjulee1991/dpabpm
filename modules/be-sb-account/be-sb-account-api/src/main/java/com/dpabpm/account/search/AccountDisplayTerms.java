@@ -72,7 +72,7 @@ public class AccountDisplayTerms extends DisplayTerms {
 		_telNo = ParamUtil.getString(request, TEL_NO);
 		_email = ParamUtil.getString(request, EMAIL);
 		_status = ParamUtil.getInteger(request, STATUS);
-		_mappingUserId = themeDisplay.getUserId();
+		_mappingUserId = ParamUtil.getInteger(request, MAPPING_USER_ID);
 
 		_password1 = ParamUtil.getString(request, PASSWORD_1);
 		_password2 = ParamUtil.getString(request, PASSWORD_2);

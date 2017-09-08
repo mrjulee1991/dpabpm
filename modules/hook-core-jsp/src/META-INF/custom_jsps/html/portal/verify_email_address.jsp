@@ -18,7 +18,7 @@
 
 <p><liferay-ui:message key="please-verify-your-mail-to-continue" /></p>
 
-<%-- <%
+<%
 String referer = ParamUtil.getString(request, WebKeys.REFERER, themeDisplay.getPathMain());
 
 if (referer.equals(themeDisplay.getPathMain() + "/portal/update_email_address")) {
@@ -58,4 +58,4 @@ String ticketKey = ParamUtil.getString(request, "ticketKey");
 			<aui:button cssClass="btn-lg" href='<%= themeDisplay.getPathMain() + "/portal/update_email_address?p_l_id=" + layout.getPlid() + "&referer=" + HttpUtil.encodeURL(referer) %>' value="change-email-address" />
 		</c:if>
 	</aui:button-row>
-</aui:form> --%>
+</aui:form>

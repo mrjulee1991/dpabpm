@@ -51,16 +51,15 @@ public class AccountBusiness {
 	 * @throws PortalException
 	 */
 	public static Account createAccount(
-		String uuid, long groupId, long companyId, long userId, String userName,
+		long groupId, long companyId, long userId, String userName,
 		String lastName, String firstName, String fullName, int gender,
 		Date birthdate, String address, String telNo, String email, int status,
-		long mappingUserId, String password1, String password2,
-		ServiceContext serviceContext)
+		String password1, String password2, ServiceContext serviceContext)
 		throws PortalException {
 
 		return AccountLocalServiceUtil.createAccount(
-			uuid, groupId, companyId, userId, userName, lastName, firstName,
-			fullName, gender, birthdate, address, telNo, email, status,
-			mappingUserId, password1, password2, serviceContext);
+			groupId, companyId, userId, userName, lastName, firstName, fullName,
+			gender, birthdate, address, telNo, email, status, password1,
+			password2, serviceContext);
 	}
 }

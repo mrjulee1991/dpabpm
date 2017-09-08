@@ -35,7 +35,7 @@ public class VerificationMail {
 		isValidMail = ticket.getExpirationDate().after(new Date());
 
 		if (isValidMail) {
-			TicketLocalServiceUtil.deleteTicket(ticket);
+			// TicketLocalServiceUtil.deleteTicket(ticket);
 			AccountBusiness.verifyMail(ticket.getClassPK());
 		}
 
