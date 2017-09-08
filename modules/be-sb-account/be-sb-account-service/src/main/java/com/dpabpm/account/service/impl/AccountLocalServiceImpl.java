@@ -22,7 +22,6 @@ import com.dpabpm.account.model.Account;
 import com.dpabpm.account.service.base.AccountLocalServiceBaseImpl;
 import com.dpabpm.util.mail.SendMailMessageUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Company;
@@ -59,9 +58,10 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 	 * account local service.
 	 */
 
-	/*
-	 * (non-Javadoc)
-	 * @see com.dpabpm.account.service.AccountLocalService#verifyMail(long)
+	/**
+	 * @param accountId
+	 * @return
+	 * @throws PortalException
 	 */
 	@Override
 	public Account verifyMail(long accountId)
@@ -77,20 +77,28 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 
 		userPersistence.update(user);
 
-		_log.info("8===============o verified mail: " + account.getEmail());
-
 		return account;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * com.dpabpm.account.service.AccountLocalService#createAccount(java.lang.
-	 * String, long, long, long, java.lang.String, java.lang.String,
-	 * java.lang.String, java.lang.String, int, java.util.Date,
-	 * java.lang.String, java.lang.String, java.lang.String, int, long,
-	 * java.lang.String, java.lang.String,
-	 * com.liferay.portal.kernel.service.ServiceContext)
+	/**
+	 * @param groupId
+	 * @param companyId
+	 * @param userId
+	 * @param userName
+	 * @param lastName
+	 * @param firstName
+	 * @param fullName
+	 * @param gender
+	 * @param birthdate
+	 * @param address
+	 * @param telNo
+	 * @param email
+	 * @param status
+	 * @param password1
+	 * @param password2
+	 * @param serviceContext
+	 * @return
+	 * @throws PortalException
 	 */
 	@Override
 	public Account createAccount(
@@ -124,8 +132,6 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 		account.setEmail(email);
 		account.setStatus(status);
 
-		_log.info("8=================o account id created: " + account.getId());
-
 		// create mapping user
 		User mappingUser = _addUserWithWorkflow(
 			companyId, userId, userName, lastName, firstName, gender, birthdate,
@@ -134,11 +140,6 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 		account.setMappingUserId(mappingUser.getUserId());;
 
 		account = accountPersistence.update(account);
-
-		_log.info(
-			"8=================o mapping user id created: " +
-				mappingUser.getUserId() + "/" +
-				mappingUser.getPasswordUnencrypted());
 
 		// add ticket for account
 		// TODO configure overdue time and time unit
@@ -166,8 +167,6 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 
 		Date expirationDate = c.getTime();
 
-		_log.info("8============o add ticket for account: " + account.getId());
-
 		return TicketLocalServiceUtil.addDistinctTicket(
 			account.getCompanyId(), account.getClass().getName(),
 			account.getId(), TicketConstants.TYPE_PASSWORD, StringPool.BLANK,
@@ -177,8 +176,7 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 
 	/**
 	 * @param account
-	 * @param mappingUser
-	 * @throws SystemException
+	 * @param ticket
 	 * @throws PortalException
 	 */
 	private void _sendConfirmationMail(Account account, Ticket ticket)
@@ -202,10 +200,6 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 		SendMailMessageUtil.send(
 			SendMailMessageUtil.SENDER_EMAIL_ADDRESS, account.getEmail(),
 			"Confirm registration", mailBody, true);
-
-		_log.info(
-			"8==================o sended confirmation mail to: " +
-				account.getEmail());
 
 	}
 

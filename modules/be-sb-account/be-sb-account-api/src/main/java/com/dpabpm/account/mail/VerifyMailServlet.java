@@ -46,9 +46,6 @@ public class VerifyMailServlet extends HttpServlet {
 		HttpServletRequest request, HttpServletResponse response)
 		throws ServletException, IOException {
 
-		_log.error("8=================o doGet verify-mail");
-		_log.error("8=================o key: " + request.getParameter("key"));
-
 		String key = request.getParameter("key");
 
 		boolean isValidMail = false;
@@ -75,8 +72,6 @@ public class VerifyMailServlet extends HttpServlet {
 	protected void doPost(
 		HttpServletRequest request, HttpServletResponse response)
 		throws ServletException, IOException {
-
-		_log.error("8=================o doPost verify-mail");
 
 		super.doPost(request, response);
 	}

@@ -9,6 +9,8 @@ import java.util.Date;
 import com.dpabpm.account.model.Account;
 import com.dpabpm.account.service.AccountLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 
 /**
@@ -29,7 +31,6 @@ public class AccountBusiness {
 	}
 
 	/**
-	 * @param uuid
 	 * @param groupId
 	 * @param companyId
 	 * @param userId
@@ -43,7 +44,6 @@ public class AccountBusiness {
 	 * @param telNo
 	 * @param email
 	 * @param status
-	 * @param mappingUserId
 	 * @param password1
 	 * @param password2
 	 * @param serviceContext
@@ -62,4 +62,6 @@ public class AccountBusiness {
 			gender, birthdate, address, telNo, email, status, password1,
 			password2, serviceContext);
 	}
+
+	private static Log _log = LogFactoryUtil.getLog(AccountBusiness.class);
 }
