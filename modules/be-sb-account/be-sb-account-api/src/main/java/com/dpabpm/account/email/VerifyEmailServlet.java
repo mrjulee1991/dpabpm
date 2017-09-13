@@ -24,12 +24,12 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
  */
 @Component(immediate = true, property = {
 	"osgi.http.whiteboard.context.path=/",
-	"osgi.http.whiteboard.servlet.name=com.dpabpm.util.mail.VerifyMailServlet",
+	"osgi.http.whiteboard.servlet.name=com.dpabpm.util.mail.VerifyEmailServlet",
 	"osgi.http.whiteboard.servlet.pattern=/verify-email",
 }, service = Servlet.class)
 public class VerifyEmailServlet extends HttpServlet {
 
-	// Servlet URL : http://localhost:8080/o/verify-mail?key=xxxxxxxxxx
+	// Servlet URL : http://localhost:8080/o/verify-email?key=xxxxxxxxxx
 
 	/**
 	 * 

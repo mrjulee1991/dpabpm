@@ -31,9 +31,8 @@ public class VerifyEmail {
 		throws PortalException {
 
 		boolean isValidEmail = false;
-		Ticket ticket = null;
 
-		ticket = TicketLocalServiceUtil.getTicket(key);
+		Ticket ticket = TicketLocalServiceUtil.getTicket(key);
 
 		isValidEmail = ticket.getExpirationDate().after(new Date());
 
