@@ -20,7 +20,7 @@ import java.util.Locale;
 
 import com.dpabpm.account.model.Account;
 import com.dpabpm.account.service.base.AccountLocalServiceBaseImpl;
-import com.dpabpm.util.email.SendEmailMessageUtil;
+import com.dpabpm.util.SendEmailMessageUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;

@@ -28,15 +28,15 @@ import com.liferay.portal.kernel.util.PortalUtil;
 	"com.liferay.portlet.instanceable=true",
 	"javax.portlet.display-name=Account Registration",
 	"javax.portlet.init-param.template-path=/",
-	"javax.portlet.init-param.view-template=/html/view.jsp",
+	"javax.portlet.init-param.view-template=/html/register/register.jsp",
 	"javax.portlet.resource-bundle=content.Language",
 	"javax.portlet.security-role-ref=power-user,user"
 }, service = Portlet.class)
 public class AccountRegistrationPortlet extends MVCPortlet {
 
 	/**
-	 * @author phucnv
-	 * @date Sep 3, 2017
+	 * @param request
+	 * @param response
 	 */
 	public void createAccount(ActionRequest request, ActionResponse response) {
 

@@ -2,7 +2,7 @@
  * 
  */
 
-package com.dpabpm.util.email;
+package com.dpabpm.util;
 
 import java.util.Iterator;
 import java.util.Locale;
@@ -38,6 +38,12 @@ public class SendEmailMessageUtil {
 	public static final String CONFIRMATION_EMAIL_SUBJECT =
 		LanguageUtil.get(Locale.getDefault(), "confirmation-email-subject");
 
+	/**
+	 * @param templateFileURL
+	 * @param replaceParameters
+	 * @param replaceVariables
+	 * @return
+	 */
 	public static String getEmailBodyFromTemplateFile(
 		String templateFileURL, String[] replaceParameters,
 		String[] replaceVariables) {
@@ -61,6 +67,12 @@ public class SendEmailMessageUtil {
 		return body;
 	}
 
+	/**
+	 * @param s
+	 * @param replaceParameters
+	 * @param replaceVariables
+	 * @return
+	 */
 	private static String replaceString(
 		String s, String[] replaceParameters, String[] replaceVariables) {
 
@@ -71,6 +83,15 @@ public class SendEmailMessageUtil {
 		return s;
 	}
 
+	/**
+	 * @param senderEmailAddress
+	 * @param receiverEmailAddress
+	 * @param subject
+	 * @param emailBody
+	 * @param isHTMLFormat
+	 * @throws SystemException
+	 * @throws PortalException
+	 */
 	public static void send(
 		String senderEmailAddress, String receiverEmailAddress, String subject,
 		String emailBody, boolean isHTMLFormat)
@@ -98,6 +119,14 @@ public class SendEmailMessageUtil {
 		}
 	}
 
+	/**
+	 * @param themeDisplay
+	 * @param formAdress
+	 * @param toAdress
+	 * @param subject
+	 * @param body
+	 * @param isHTMLFormat
+	 */
 	public static void send(
 		ThemeDisplay themeDisplay, String formAdress, String toAdress,
 		String subject, String body, boolean isHTMLFormat) {
@@ -120,6 +149,11 @@ public class SendEmailMessageUtil {
 		subscriptionSender.flushNotificationsAsync();
 	}
 
+	/**
+	 * @param companyId
+	 * @param roleStrId
+	 * @return
+	 */
 	private static Role getRoleById(long companyId, String roleStrId) {
 
 		try {
@@ -133,6 +167,9 @@ public class SendEmailMessageUtil {
 		return null;
 	}
 
+	/**
+	 * @return
+	 */
 	private static User getAdmin() {
 
 		long companyId = PortalUtil.getDefaultCompanyId();

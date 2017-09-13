@@ -8,7 +8,7 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.dpabpm.util.datetime.DateTimeUtil;
+import com.dpabpm.util.DateTimeUtil;
 import com.liferay.portal.kernel.dao.search.DisplayTerms;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;

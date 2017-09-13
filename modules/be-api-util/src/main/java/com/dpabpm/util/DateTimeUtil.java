@@ -2,7 +2,7 @@
  * 
  */
 
-package com.dpabpm.util.datetime;
+package com.dpabpm.util;
 
 import java.text.DateFormat;
 import java.text.ParseException;
