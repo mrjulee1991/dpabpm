@@ -2,7 +2,7 @@
  * 
  */
 
-package com.dpabpm.account.mail;
+package com.dpabpm.account.email;
 
 import java.io.IOException;
 
@@ -25,9 +25,9 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 @Component(immediate = true, property = {
 	"osgi.http.whiteboard.context.path=/",
 	"osgi.http.whiteboard.servlet.name=com.dpabpm.util.mail.VerifyMailServlet",
-	"osgi.http.whiteboard.servlet.pattern=/verify-mail",
+	"osgi.http.whiteboard.servlet.pattern=/verify-email",
 }, service = Servlet.class)
-public class VerifyMailServlet extends HttpServlet {
+public class VerifyEmailServlet extends HttpServlet {
 
 	// Servlet URL : http://localhost:8080/o/verify-mail?key=xxxxxxxxxx
 
@@ -48,17 +48,17 @@ public class VerifyMailServlet extends HttpServlet {
 
 		String key = request.getParameter("key");
 
-		boolean isValidMail = false;
+		boolean isValidEmail = false;
 
 		try {
-			isValidMail = VerificationMail.verify(key);
+			isValidEmail = VerifyEmail.verify(key);
 		}
 		catch (PortalException e) {
 			_log.error(e);
 		}
 
 		response.sendRedirect(
-			"web/guest/verify-mail?isValidMail=" + isValidMail);
+			"web/guest/verify-email?isValidEmail=" + isValidEmail);
 
 		// super.doGet(request, response);
 	}

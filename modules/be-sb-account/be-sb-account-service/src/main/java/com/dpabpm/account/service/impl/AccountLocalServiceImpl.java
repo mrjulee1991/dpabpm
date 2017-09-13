@@ -20,7 +20,7 @@ import java.util.Locale;
 
 import com.dpabpm.account.model.Account;
 import com.dpabpm.account.service.base.AccountLocalServiceBaseImpl;
-import com.dpabpm.util.mail.SendMailMessageUtil;
+import com.dpabpm.util.email.SendEmailMessageUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -34,6 +34,7 @@ import com.liferay.portal.kernel.service.TicketLocalServiceUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
 import aQute.bnd.annotation.ProviderType;
 
@@ -59,6 +60,18 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 	 */
 
 	/**
+	 * @param email
+	 * @return
+	 * @throws PortalException
+	 */
+	@Override
+	public Account findByEmail(String email)
+		throws PortalException {
+
+		return accountPersistence.findByEmail(email);
+	}
+
+	/**
 	 * @param accountId
 	 * @return
 	 * @throws PortalException
@@ -68,12 +81,15 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 		throws PortalException {
 
 		Account account = accountPersistence.findByPrimaryKey(accountId);
+
+		account.setStatus(WorkflowConstants.STATUS_APPROVED);
+
+		accountPersistence.update(account);
+
 		User user =
 			userPersistence.findByPrimaryKey(account.getMappingUserId());
 
-		user.setEmailAddressVerified(true);
-		user.setReminderQueryQuestion(StringPool.SLASH);
-		user.setReminderQueryAnswer(StringPool.SLASH);
+		user.setStatus(WorkflowConstants.STATUS_APPROVED);
 
 		userPersistence.update(user);
 
@@ -93,7 +109,6 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 	 * @param address
 	 * @param telNo
 	 * @param email
-	 * @param status
 	 * @param password1
 	 * @param password2
 	 * @param serviceContext
@@ -104,7 +119,7 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 	public Account createAccount(
 		long groupId, long companyId, long userId, String userName,
 		String lastName, String firstName, String fullName, int gender,
-		Date birthdate, String address, String telNo, String email, int status,
+		Date birthdate, String address, String telNo, String email,
 		String password1, String password2, ServiceContext serviceContext)
 		throws PortalException {
 
@@ -130,12 +145,12 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 		account.setAddress(address);
 		account.setTelNo(telNo);
 		account.setEmail(email);
-		account.setStatus(status);
+		account.setStatus(WorkflowConstants.STATUS_PENDING);
 
 		// create mapping user
 		User mappingUser = _addUserWithWorkflow(
 			companyId, userId, userName, lastName, firstName, gender, birthdate,
-			email, password1, password2, serviceContext);
+			email, account.getStatus(), password1, password2, serviceContext);
 
 		account.setMappingUserId(mappingUser.getUserId());;
 
@@ -183,9 +198,9 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 		throws PortalException {
 
 		String templateFileURL =
-			SendMailMessageUtil.PATH_ACCOUNT_CREATED_NOTIFICATION;
+			SendEmailMessageUtil.PATH_ACCOUNT_CREATED_NOTIFICATION;
 
-		String verificationURL = _generateVerificationURL(account, ticket);
+		String verificationURL = _generateVerifyURL(account, ticket);
 
 		String[] replaceParameters = {
 			"[$TO_NAME$]", "[$VERIFICATION_URL$]"
@@ -194,12 +209,12 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 			account.getFullName(), verificationURL
 		};
 
-		String mailBody = SendMailMessageUtil.getEmailBodyFromTemplateFile(
+		String mailBody = SendEmailMessageUtil.getEmailBodyFromTemplateFile(
 			templateFileURL, replaceParameters, replaceVariables);
 
-		SendMailMessageUtil.send(
-			SendMailMessageUtil.SENDER_EMAIL_ADDRESS, account.getEmail(),
-			"Confirm registration", mailBody, true);
+		SendEmailMessageUtil.send(
+			SendEmailMessageUtil.SENDER_EMAIL_ADDRESS, account.getEmail(),
+			SendEmailMessageUtil.CONFIRMATION_EMAIL_SUBJECT, mailBody, true);
 
 	}
 
@@ -209,7 +224,7 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 	 * @return
 	 * @throws PortalException
 	 */
-	private String _generateVerificationURL(Account account, Ticket ticket)
+	private String _generateVerifyURL(Account account, Ticket ticket)
 		throws PortalException {
 
 		Company company =
@@ -220,7 +235,7 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 				company.getVirtualHostname(),
 				PortalUtil.getPortalServerPort(false), false));
 
-		portalURL.append("/o/verify-mail?key=" + ticket.getKey());
+		portalURL.append("/o/verify-email?key=" + ticket.getKey());
 
 		return portalURL.toString();
 	}
@@ -242,7 +257,7 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 	 */
 	private User _addUserWithWorkflow(
 		long companyId, long userId, String userName, String lastName,
-		String firstName, int gender, Date birthdate, String email,
+		String firstName, int gender, Date birthdate, String email, int status,
 		String password1, String password2, ServiceContext serviceContext)
 		throws PortalException {
 
@@ -265,7 +280,11 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 			birthdayDay, birthdayYear, StringPool.BLANK, null, null, null, null,
 			false, serviceContext);
 
-		return user;
+		user.setStatus(status);
+		user.setReminderQueryQuestion(StringPool.SLASH);
+		user.setReminderQueryAnswer(StringPool.SLASH);
+
+		return userPersistence.update(user);
 	}
 
 	private Log _log = LogFactoryUtil.getLog(this.getClass());

@@ -24,7 +24,7 @@ public class AccountBusiness {
 	 * @return
 	 * @throws PortalException
 	 */
-	public static Account verifyMail(long accountId)
+	public static Account verifyEmail(long accountId)
 		throws PortalException {
 
 		return AccountLocalServiceUtil.verifyMail(accountId);
@@ -53,14 +53,14 @@ public class AccountBusiness {
 	public static Account createAccount(
 		long groupId, long companyId, long userId, String userName,
 		String lastName, String firstName, String fullName, int gender,
-		Date birthdate, String address, String telNo, String email, int status,
+		Date birthdate, String address, String telNo, String email,
 		String password1, String password2, ServiceContext serviceContext)
 		throws PortalException {
 
 		return AccountLocalServiceUtil.createAccount(
 			groupId, companyId, userId, userName, lastName, firstName, fullName,
-			gender, birthdate, address, telNo, email, status, password1,
-			password2, serviceContext);
+			gender, birthdate, address, telNo, email, password1, password2,
+			serviceContext);
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(AccountBusiness.class);

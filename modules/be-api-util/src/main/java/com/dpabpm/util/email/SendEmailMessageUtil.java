@@ -2,12 +2,14 @@
  * 
  */
 
-package com.dpabpm.util.mail;
+package com.dpabpm.util.email;
 
 import java.util.Iterator;
+import java.util.Locale;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Role;
@@ -25,13 +27,16 @@ import com.liferay.util.ContentUtil;
  * @author phucnv
  * @date Sep 3, 2017
  */
-public class SendMailMessageUtil {
+public class SendEmailMessageUtil {
 
 	public static final String PATH_ACCOUNT_CREATED_NOTIFICATION =
-		"/com/dpabpm/util/mail/resources/account_created_notification.mt";
+		"/com/dpabpm/util/mail/templates/account_created_notification.temp";
 
 	// TODO configure email sender address
 	public static final String SENDER_EMAIL_ADDRESS = "nvp191@gmail.com";
+
+	public static final String CONFIRMATION_EMAIL_SUBJECT =
+		LanguageUtil.get(Locale.getDefault(), "confirmation-email-subject");
 
 	public static String getEmailBodyFromTemplateFile(
 		String templateFileURL, String[] replaceParameters,
@@ -148,5 +153,5 @@ public class SendMailMessageUtil {
 		return null;
 	}
 
-	private static Log _log = LogFactoryUtil.getLog(SendMailMessageUtil.class);
+	private static Log _log = LogFactoryUtil.getLog(SendEmailMessageUtil.class);
 }

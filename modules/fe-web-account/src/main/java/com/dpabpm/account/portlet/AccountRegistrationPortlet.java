@@ -26,7 +26,7 @@ import com.liferay.portal.kernel.util.PortalUtil;
 @Component(immediate = true, property = {
 	"com.liferay.portlet.display-category=category.dpabpm.account",
 	"com.liferay.portlet.instanceable=true",
-	"javax.portlet.display-name=Account mgt Portlet",
+	"javax.portlet.display-name=Account Registration",
 	"javax.portlet.init-param.template-path=/",
 	"javax.portlet.init-param.view-template=/html/view.jsp",
 	"javax.portlet.resource-bundle=content.Language",
@@ -54,8 +54,8 @@ public class AccountRegistrationPortlet extends MVCPortlet {
 				accountTerms.getFullName(), accountTerms.getGender(),
 				accountTerms.getBirthdate(), accountTerms.getAddress(),
 				accountTerms.getTelNo(), accountTerms.getEmail(),
-				accountTerms.getStatus(), accountTerms.getPassword1(),
-				accountTerms.getPassword2(), serviceContext);
+				accountTerms.getPassword1(), accountTerms.getPassword2(),
+				serviceContext);
 		}
 		catch (Exception e) {
 			_log.error(e);
