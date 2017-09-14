@@ -12,7 +12,7 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
  * @date Sep 10, 2017
  */
 @Component(immediate = true, property = {
-	"com.liferay.portlet.display-category=category.dpabpm.account",
+	"com.liferay.portlet.display-category=category.dpabpm.login",
 	"com.liferay.portlet.instanceable=true",
 	"javax.portlet.display-name=Login Portlet",
 	"javax.portlet.name=MyLoginPortlet",

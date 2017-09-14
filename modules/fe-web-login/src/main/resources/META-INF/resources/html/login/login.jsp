@@ -16,7 +16,9 @@
         }
         %>
 
-        <liferay-ui:message key="<%= LanguageUtil.format(resourceBundle, "you-are-signed-in-as-x", signedInAs) %>" />
+        <p><liferay-ui:message key="<%= LanguageUtil.format(resourceBundle, "you-are-signed-in-as-x", signedInAs) %>" /></p>
+        
+        <p><aui:button href="/c/portal/logout" value="sign-out" /></p>
     </c:when>
     <c:otherwise>
     
@@ -30,6 +32,8 @@
 
         <aui:form action="<%= loginURL %>" autocomplete='on' cssClass="sign-in-form" method="post" name="loginForm">
         
+        	<div class="inline-alert-container lfr-alert-container"></div>
+        
         	<liferay-ui:error exception="<%= AuthException.class %>" message="authentication-failed" />
         	<liferay-ui:error key="verify-email-and-login-again" message="verify-email-and-login-again" />
         	<liferay-ui:error key="email-not-exist" message="email-not-exist" />
@@ -37,9 +41,11 @@
         	<aui:fieldset>
 	            <aui:input name="saveLastPath" type="hidden" value="<%= false %>" />
 	            <aui:input name="redirect" type="hidden" value="<%= redirect %>" />
-	            <aui:input autoFocus="true" cssClass="clearable" label="email-address" name="login" showRequiredLabel="<%= false %>" type="text" value="">
+	            
+	            <aui:input autoFocus="true" cssClass="clearable" label="email-address" name="login" showRequiredLabel="<%= false %>" type="text">
 	                <aui:validator name="required" />
 	            </aui:input>
+	            
 	            <aui:input name="password" showRequiredLabel="<%= false %>" type="password">
 	                <aui:validator name="required" />
 	            </aui:input>

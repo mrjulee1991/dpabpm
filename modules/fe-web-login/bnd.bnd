@@ -1,3 +1,4 @@
 Bundle-Name: fe-web-login
 Bundle-SymbolicName: fe.web.login
 Bundle-Version: 1.0.0
+-includeresource: @com.liferay.login.web-1.0.1.jar!/com/liferay/login/web/portlet/util/LoginUtil.class

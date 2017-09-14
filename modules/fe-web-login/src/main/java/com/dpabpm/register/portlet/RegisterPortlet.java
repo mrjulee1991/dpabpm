@@ -2,7 +2,7 @@
  * 
  */
 
-package com.dpabpm.account.portlet;
+package com.dpabpm.register.portlet;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -24,10 +24,10 @@ import com.liferay.portal.kernel.util.PortalUtil;
 
 /**
  * @author phucnv
- * @date Sep 2, 2017
+ * @date Sep 15, 2017
  */
 @Component(immediate = true, property = {
-	"com.liferay.portlet.display-category=category.dpabpm.account",
+	"com.liferay.portlet.display-category=category.dpabpm.login",
 	"com.liferay.portlet.instanceable=true",
 	"javax.portlet.display-name=Account Registration",
 	"javax.portlet.init-param.template-path=/",
@@ -35,7 +35,7 @@ import com.liferay.portal.kernel.util.PortalUtil;
 	"javax.portlet.resource-bundle=content.Language_vi",
 	"javax.portlet.security-role-ref=power-user,user"
 }, service = Portlet.class)
-public class AccountRegistrationPortlet extends MVCPortlet {
+public class RegisterPortlet extends MVCPortlet {
 
 	/**
 	 * @param request

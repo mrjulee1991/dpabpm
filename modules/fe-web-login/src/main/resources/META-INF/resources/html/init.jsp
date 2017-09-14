@@ -10,6 +10,8 @@
 <%@page import="com.liferay.portal.kernel.util.StringPool"%>
 <%@page import="java.util.Date"%>
 <%@page import="java.util.Calendar"%>
+<%@page import="com.liferay.portal.kernel.util.ParamUtil"%>
+<%@page import="com.liferay.portal.kernel.util.HtmlUtil"%>
 
 <liferay-theme:defineObjects />
 

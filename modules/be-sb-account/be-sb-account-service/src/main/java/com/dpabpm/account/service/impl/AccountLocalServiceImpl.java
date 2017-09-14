@@ -123,6 +123,7 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 		String password1, String password2, ServiceContext serviceContext)
 		throws PortalException {
 
+		// create account
 		long id = counterLocalService.increment(Account.class.getName());
 		Account account = accountPersistence.create(id);
 
@@ -156,11 +157,10 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 
 		account = accountPersistence.update(account);
 
-		// add ticket for account
-		// TODO configure overdue time and time unit
-		Ticket ticket = _addTicket(account, 5, Calendar.MINUTE, serviceContext);
+		// create ticket
+		Ticket ticket = _addTicket(account, 24, Calendar.HOUR, serviceContext);
 
-		// send confirmation mail
+		// send mail confirmation
 		_sendConfirmationMail(account, ticket);
 
 		return account;
@@ -180,12 +180,10 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 		c.setTime(new Date());
 		c.add(timeUnit, overdueTime);
 
-		Date expirationDate = c.getTime();
-
 		return TicketLocalServiceUtil.addDistinctTicket(
 			account.getCompanyId(), account.getClass().getName(),
-			account.getId(), TicketConstants.TYPE_PASSWORD, StringPool.BLANK,
-			expirationDate, serviceContext);
+			account.getId(), TicketConstants.TYPE_PASSWORD, account.getEmail(),
+			c.getTime(), serviceContext);
 
 	}
 
@@ -198,15 +196,15 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 		throws PortalException {
 
 		String templateFileURL =
-			SendEmailMessageUtil.PATH_ACCOUNT_CREATED_NOTIFICATION;
+			SendEmailMessageUtil.PATH_ACCOUNT_CREATED_NOTIFICATION_TEMP;
 
-		String verificationURL = _generateVerifyURL(account, ticket);
+		String verifyURL = _generateVerifyURL(account, ticket);
 
 		String[] replaceParameters = {
-			"[$TO_NAME$]", "[$VERIFICATION_URL$]"
+			"[$TO_NAME$]", "[$VERIFY_URL$]"
 		};
 		String[] replaceVariables = {
-			account.getFullName(), verificationURL
+			account.getFullName(), verifyURL
 		};
 
 		String mailBody = SendEmailMessageUtil.getEmailBodyFromTemplateFile(

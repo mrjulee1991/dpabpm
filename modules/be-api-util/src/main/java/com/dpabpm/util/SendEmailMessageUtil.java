@@ -29,7 +29,7 @@ import com.liferay.util.ContentUtil;
  */
 public class SendEmailMessageUtil {
 
-	public static final String PATH_ACCOUNT_CREATED_NOTIFICATION =
+	public static final String PATH_ACCOUNT_CREATED_NOTIFICATION_TEMP =
 		"/com/dpabpm/util/mail/templates/account_created_notification.temp";
 
 	// TODO configure email sender address
