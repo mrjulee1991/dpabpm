@@ -1,4 +1,5 @@
 
+<%@page import="com.liferay.portal.kernel.language.LanguageUtil"%>
 <%@page import="com.liferay.portal.kernel.security.auth.AuthException"%>
 <%@include file="init.jsp"%>
 
@@ -15,7 +16,7 @@
         }
         %>
 
-        <liferay-ui:message arguments="<%= signedInAs %>" key="you-are-signed-in-as-x" translateArguments="<%= false %>" />
+        <liferay-ui:message key="<%= LanguageUtil.format(resourceBundle, "you-are-signed-in-as-x", signedInAs) %>" />
     </c:when>
     <c:otherwise>
     

@@ -18,7 +18,7 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 	"javax.portlet.name=MyLoginPortlet",
 	"javax.portlet.init-param.template-path=/",
 	"javax.portlet.init-param.view-template=/html/login/login.jsp",
-	"javax.portlet.resource-bundle=content.Language",
+	"javax.portlet.resource-bundle=content.Language_vi",
 	"javax.portlet.security-role-ref=power-user,user"
 }, service = Portlet.class)
 public class LoginPortlet extends MVCPortlet {

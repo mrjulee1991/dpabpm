@@ -12,11 +12,14 @@ import org.osgi.service.component.annotations.Component;
 
 import com.dpabpm.account.business.AccountBusiness;
 import com.dpabpm.account.search.AccountDisplayTerms;
+import com.liferay.portal.kernel.exception.UserEmailAddressException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
+import com.liferay.portal.kernel.servlet.SessionErrors;
+import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.PortalUtil;
 
 /**
@@ -29,7 +32,7 @@ import com.liferay.portal.kernel.util.PortalUtil;
 	"javax.portlet.display-name=Account Registration",
 	"javax.portlet.init-param.template-path=/",
 	"javax.portlet.init-param.view-template=/html/register/register.jsp",
-	"javax.portlet.resource-bundle=content.Language",
+	"javax.portlet.resource-bundle=content.Language_vi",
 	"javax.portlet.security-role-ref=power-user,user"
 }, service = Portlet.class)
 public class AccountRegistrationPortlet extends MVCPortlet {
@@ -38,14 +41,15 @@ public class AccountRegistrationPortlet extends MVCPortlet {
 	 * @param request
 	 * @param response
 	 */
-	public void createAccount(ActionRequest request, ActionResponse response) {
+	public void createAccount(
+		ActionRequest actionRequest, ActionResponse actionResponse) {
 
 		try {
 			ServiceContext serviceContext =
-				ServiceContextFactory.getInstance(request);
+				ServiceContextFactory.getInstance(actionRequest);
 
 			AccountDisplayTerms accountTerms = new AccountDisplayTerms(
-				PortalUtil.getHttpServletRequest(request));
+				PortalUtil.getHttpServletRequest(actionRequest));
 
 			AccountBusiness.createAccount(
 				accountTerms.getGroupId(), accountTerms.getCompanyId(),
@@ -56,13 +60,27 @@ public class AccountRegistrationPortlet extends MVCPortlet {
 				accountTerms.getTelNo(), accountTerms.getEmail(),
 				accountTerms.getPassword1(), accountTerms.getPassword2(),
 				serviceContext);
+
+			hideDefaultSuccessMessage(actionRequest);
+			SessionMessages.add(
+				actionRequest,
+				"register-successfull.-url-verify-had-been-send-to-x");
+
 		}
 		catch (Exception e) {
 			_log.error(e);
+
+			hideDefaultErrorMessage(actionRequest);
+
+			if (e instanceof UserEmailAddressException.MustNotBeDuplicate) {
+				SessionErrors.add(
+					actionRequest,
+					UserEmailAddressException.MustNotBeDuplicate.class);
+			}
 		}
-		finally {
-			response.setRenderParameter("mvcPath", "/html/view.jsp");
-		}
+
+		actionResponse.setRenderParameter(
+			"mvcPath", "/html/register/register.jsp");
 	}
 
 	private Log _log = LogFactoryUtil.getLog(this.getClass());
