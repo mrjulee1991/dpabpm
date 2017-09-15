@@ -39,7 +39,10 @@ public class VerifyEmail {
 		if (isValidEmail) {
 			AccountBusiness.verifyEmail(ticket.getClassPK());
 		}
-		TicketLocalServiceUtil.deleteTicket(ticket);
+
+		// one-time-use ticket
+		ticket.setExpirationDate(new Date(0));
+		TicketLocalServiceUtil.updateTicket(ticket);
 
 		return isValidEmail;
 	}

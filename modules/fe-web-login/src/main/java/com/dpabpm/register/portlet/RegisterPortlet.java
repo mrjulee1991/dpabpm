@@ -11,7 +11,10 @@ import javax.portlet.Portlet;
 import org.osgi.service.component.annotations.Component;
 
 import com.dpabpm.account.business.AccountBusiness;
+import com.dpabpm.account.model.Account;
 import com.dpabpm.account.search.AccountDisplayTerms;
+import com.dpabpm.account.service.AccountLocalServiceUtil;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.UserEmailAddressException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -20,6 +23,7 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 
 /**
@@ -30,12 +34,43 @@ import com.liferay.portal.kernel.util.PortalUtil;
 	"com.liferay.portlet.display-category=category.dpabpm.login",
 	"com.liferay.portlet.instanceable=true",
 	"javax.portlet.display-name=Account Registration",
-	"javax.portlet.init-param.template-path=/",
+	"javax.portlet.init-param.template-path=/html/register/",
 	"javax.portlet.init-param.view-template=/html/register/register.jsp",
 	"javax.portlet.resource-bundle=content.Language_vi",
 	"javax.portlet.security-role-ref=power-user,user"
 }, service = Portlet.class)
 public class RegisterPortlet extends MVCPortlet {
+
+	/**
+	 * @param actionRequest
+	 * @param actionResponse
+	 */
+	public void resendKey(
+		ActionRequest actionRequest, ActionResponse actionResponse) {
+
+		try {
+			ServiceContext serviceContext =
+				ServiceContextFactory.getInstance(actionRequest);
+
+			String email =
+				ParamUtil.getString(actionRequest, AccountDisplayTerms.EMAIL);
+
+			Account account = AccountLocalServiceUtil.findByEmail(email);
+
+			AccountLocalServiceUtil._sendConfirmationMail(
+				account, serviceContext);
+
+			hideDefaultSuccessMessage(actionRequest);
+			SessionMessages.add(
+				actionRequest, "key-had-been-send-to-your-email");
+		}
+		catch (PortalException e) {
+			_log.error(e);
+		}
+
+		actionResponse.setRenderParameter(
+			"mvcPath", "/html/register/verify_email.jsp");
+	}
 
 	/**
 	 * @param request

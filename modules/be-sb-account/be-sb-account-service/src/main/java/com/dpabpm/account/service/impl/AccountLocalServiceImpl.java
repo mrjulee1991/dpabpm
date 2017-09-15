@@ -157,11 +157,8 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 
 		account = accountPersistence.update(account);
 
-		// create ticket
-		Ticket ticket = _addTicket(account, 24, Calendar.HOUR, serviceContext);
-
 		// send mail confirmation
-		_sendConfirmationMail(account, ticket);
+		_sendConfirmationMail(account, serviceContext);
 
 		return account;
 	}
@@ -192,8 +189,13 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 	 * @param ticket
 	 * @throws PortalException
 	 */
-	private void _sendConfirmationMail(Account account, Ticket ticket)
+	@Override
+	public void _sendConfirmationMail(
+		Account account, ServiceContext serviceContext)
 		throws PortalException {
+
+		// create ticket
+		Ticket ticket = _addTicket(account, 24, Calendar.HOUR, serviceContext);
 
 		String templateFileURL =
 			SendEmailMessageUtil.PATH_ACCOUNT_CREATED_NOTIFICATION_TEMP;

@@ -58,7 +58,8 @@ public class VerifyEmailServlet extends HttpServlet {
 		}
 
 		response.sendRedirect(
-			"/web/guest/verify-email?isValidEmail=" + isValidEmail);
+			"/web/guest/register?action=verify_email&isValidEmail=" +
+				isValidEmail + "&key=" + key);
 
 		// super.doGet(request, response);
 	}
