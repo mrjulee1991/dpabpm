@@ -1,3 +1,4 @@
+<%@page import="com.liferay.portal.kernel.workflow.WorkflowConstants"%>
 <%@page import="com.liferay.portal.kernel.service.TicketLocalServiceUtil"%>
 <%@page import="com.dpabpm.account.service.AccountLocalServiceUtil"%>
 <%@page import="com.dpabpm.account.model.Account"%>
@@ -5,12 +6,12 @@
 <%@include file="init.jsp"%>
 
 <%
-boolean isValidEmail = GetterUtil.getBoolean(PortalUtil.getOriginalServletRequest(request).getParameter("isValidEmail"));
+boolean isValidKey = GetterUtil.getBoolean(PortalUtil.getOriginalServletRequest(request).getParameter("isValidKey"));
 String key = GetterUtil.getString(PortalUtil.getOriginalServletRequest(request).getParameter("key"));
 
-String email = StringPool.BLANK;
+Account acc = null;
 try {
-	email = TicketLocalServiceUtil.getTicket(key).getExtraInfo();
+	acc = AccountLocalServiceUtil.findByEmail(TicketLocalServiceUtil.getTicket(key).getExtraInfo());
 } catch (Exception e){
 	_log.error(e);
 }
@@ -20,26 +21,28 @@ try {
 <liferay-ui:success key="key-had-been-send-to-your-email" message="key-had-been-send-to-your-email" />
 
 <liferay-portlet:actionURL name="resendKey" var="resendKeyURL">
-	<liferay-portlet:param name="<%= AccountDisplayTerms.EMAIL %>" value="<%= email %>"/>
+	<liferay-portlet:param name="<%= AccountDisplayTerms.EMAIL %>" value="<%= acc == null ? "" : HtmlUtil.escape(acc.getEmail()) %>"/>
 </liferay-portlet:actionURL>
 
 <c:choose>
-	<c:when test="<%= isValidEmail && Validator.isNotNull(email) %>">
+	<c:when test="<%= isValidKey && Validator.isNotNull(acc) %>">
 		<liferay-ui:message key="verify-email-successful" />
 		<aui:button-row>
 			<aui:button href="<%= themeDisplay.getPortalURL() %>" value="home-page" />
 		</aui:button-row>
 	</c:when>
-	<c:when test="<%= !isValidEmail %>">
+	<c:when test="<%= !isValidKey && Validator.isNotNull(acc) && acc.getStatus() != WorkflowConstants.STATUS_APPROVED %>">
 		<liferay-ui:message key="verify-email-failure.-your-key-is-expired-or-not-available" />
-		<c:choose>
-			<c:when test="<%= Validator.isNotNull(email) %>">
-				<aui:button-row>
-					<aui:button href="<%= resendKeyURL.toString() %>" value="resend-key" />
-					<aui:button href="<%= themeDisplay.getPortalURL() %>" value="home-page" />
-				</aui:button-row>
-			</c:when>
-		</c:choose>
+		<aui:button-row>
+			<aui:button href="<%= resendKeyURL.toString() %>" value="resend-key" />
+			<aui:button href="<%= themeDisplay.getPortalURL() %>" value="home-page" />
+		</aui:button-row>
+	</c:when>
+	<c:when test="<%= !isValidKey && Validator.isNotNull(acc) && acc.getStatus() == WorkflowConstants.STATUS_APPROVED %>">
+		<liferay-ui:message key="your-account-is-allready-actived" />
+		<aui:button-row>
+			<aui:button href="<%= themeDisplay.getPortalURL() %>" value="home-page" />
+		</aui:button-row>
 	</c:when>
 	<c:otherwise>
 		<liferay-ui:message key="invalid-url" />

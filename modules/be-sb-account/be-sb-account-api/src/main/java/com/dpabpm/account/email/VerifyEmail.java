@@ -30,13 +30,14 @@ public class VerifyEmail {
 	public static boolean verify(String key)
 		throws PortalException {
 
-		boolean isValidEmail = false;
+		boolean isValidKey = false;
 
 		Ticket ticket = TicketLocalServiceUtil.getTicket(key);
 
-		isValidEmail = ticket.getExpirationDate().after(new Date());
+		isValidKey = ticket.getExpirationDate().after(new Date());
 
-		if (isValidEmail) {
+
+		if (isValidKey) {
 			AccountBusiness.verifyEmail(ticket.getClassPK());
 		}
 
@@ -44,7 +45,7 @@ public class VerifyEmail {
 		ticket.setExpirationDate(new Date(0));
 		TicketLocalServiceUtil.updateTicket(ticket);
 
-		return isValidEmail;
+		return isValidKey;
 	}
 
 	/**

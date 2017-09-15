@@ -48,18 +48,18 @@ public class VerifyEmailServlet extends HttpServlet {
 
 		String key = request.getParameter("key");
 
-		boolean isValidEmail = false;
+		boolean isValidKey = false;
 
 		try {
-			isValidEmail = VerifyEmail.verify(key);
+			isValidKey = VerifyEmail.verify(key);
 		}
 		catch (PortalException e) {
 			_log.error(e);
 		}
 
 		response.sendRedirect(
-			"/web/guest/register?action=verify_email&isValidEmail=" +
-				isValidEmail + "&key=" + key);
+			"/web/guest/register?action=verify_email&isValidKey=" + isValidKey +
+				"&key=" + key);
 
 		// super.doGet(request, response);
 	}
