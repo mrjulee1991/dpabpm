@@ -1,7 +1,3 @@
-<%@page import="com.liferay.portal.kernel.workflow.WorkflowConstants"%>
-<%@page import="com.liferay.portal.kernel.service.TicketLocalServiceUtil"%>
-<%@page import="com.dpabpm.account.service.AccountLocalServiceUtil"%>
-<%@page import="com.dpabpm.account.model.Account"%>
 
 <%@include file="init.jsp"%>
 

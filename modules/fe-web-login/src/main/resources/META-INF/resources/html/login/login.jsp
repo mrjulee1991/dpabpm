@@ -1,6 +1,4 @@
 
-<%@page import="com.liferay.portal.kernel.security.auth.AuthException"%>
-
 <%@include file="init.jsp"%>
 
 <c:choose>
