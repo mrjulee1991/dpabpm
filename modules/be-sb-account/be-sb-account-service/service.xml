@@ -56,6 +56,10 @@
 			<finder-column name="email" />
 		</finder>
 		
+		<finder name="MappingUserId" return-type="Account">
+			<finder-column name="mappingUserId" />
+		</finder>
+		
 		<!-- References -->
 
 		<reference entity="User" package-path="com.liferay.portal" />
