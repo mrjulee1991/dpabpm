@@ -15,7 +15,7 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 	"com.liferay.portlet.display-category=category.dpabpm.login",
 	"com.liferay.portlet.instanceable=true",
 	"javax.portlet.display-name=Login Portlet",
-	"javax.portlet.name=MyLoginPortlet",
+	"javax.portlet.name=com_dpabpm_login_portelt_LoginPortlet",
 	"javax.portlet.init-param.template-path=/html/login/",
 	"javax.portlet.init-param.view-template=/html/login/login.jsp",
 	"javax.portlet.resource-bundle=content.Language_vi",

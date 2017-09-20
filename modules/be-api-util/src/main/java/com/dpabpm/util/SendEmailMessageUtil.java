@@ -29,14 +29,19 @@ import com.liferay.util.ContentUtil;
  */
 public class SendEmailMessageUtil {
 
-	public static final String PATH_ACCOUNT_CREATED_NOTIFICATION_TEMP =
-		"/com/dpabpm/util/mail/templates/account_created_notification.temp";
-
-	// TODO configure email sender address
 	public static final String SENDER_EMAIL_ADDRESS = "nvp191@gmail.com";
 
 	public static final String CONFIRMATION_EMAIL_SUBJECT =
 		LanguageUtil.get(Locale.getDefault(), "confirmation-email-subject");
+
+	public static final String PATH_ACCOUNT_CREATED_NOTIFICATION_TEMP =
+		"/com/dpabpm/util/mail/templates/account_created_notification.temp";
+
+	public static final String SEND_PASSWORD_SUBJECT =
+		LanguageUtil.get(Locale.getDefault(), "send-password");
+
+	public static final String PATH_SEND_PASSWORD_TEMP =
+		"/com/dpabpm/util/mail/templates/send_password.temp";
 
 	/**
 	 * @param templateFileURL

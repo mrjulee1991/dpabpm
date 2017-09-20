@@ -51,7 +51,7 @@ public class VerifyEmailServlet extends HttpServlet {
 		boolean isValidKey = false;
 
 		try {
-			isValidKey = VerifyEmail.verify(key);
+			isValidKey = AccountEmailUtil.verifyEmail(key);
 		}
 		catch (PortalException e) {
 			_log.error(e);

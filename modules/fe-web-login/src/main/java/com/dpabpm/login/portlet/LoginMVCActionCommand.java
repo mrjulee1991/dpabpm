@@ -11,7 +11,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.service.component.annotations.Component;
 
-import com.dpabpm.account.email.VerifyEmail;
+import com.dpabpm.account.email.AccountEmailUtil;
+import com.liferay.portal.kernel.exception.NoSuchEmailAddressException;
+import com.liferay.portal.kernel.exception.UserActiveException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.CompanyConstants;
@@ -29,7 +31,8 @@ import com.liferay.portal.kernel.util.WebKeys;
  * @date Sep 10, 2017
  */
 @Component(property = {
-	"javax.portlet.name=MyLoginPortlet", "mvc.command.name=/login/login"
+	"javax.portlet.name=com_dpabpm_login_portelt_LoginPortlet",
+	"mvc.command.name=/login/login"
 }, service = MVCActionCommand.class)
 public class LoginMVCActionCommand extends BaseMVCActionCommand {
 
@@ -61,11 +64,11 @@ public class LoginMVCActionCommand extends BaseMVCActionCommand {
 		hideDefaultErrorMessage(actionRequest);
 		hideDefaultSuccessMessage(actionRequest);
 
-		if (!VerifyEmail.checkEmaiExisted(login)) {
-			SessionErrors.add(actionRequest, "email-not-exist");
+		if (!AccountEmailUtil.checkEmaiExisted(login)) {
+			SessionErrors.add(actionRequest, NoSuchEmailAddressException.class);
 		}
-		else if (!VerifyEmail.checkEmailVerified(login)) {
-			SessionErrors.add(actionRequest, "verify-email-and-login-again");
+		else if (!AccountEmailUtil.checkEmailVerified(login)) {
+			SessionErrors.add(actionRequest, UserActiveException.class);
 		}
 		else {
 			AuthenticatedSessionManagerUtil.login(

@@ -1,4 +1,6 @@
-
+<%@page import="com.liferay.portal.kernel.exception.NoSuchEmailAddressException"%>
+<%@page import="com.liferay.portal.kernel.exception.UserActiveException"%>
+<%@page import="javax.portlet.WindowState"%>
 <%@include file="init.jsp"%>
 
 <c:choose>
@@ -33,8 +35,8 @@
         	<div class="inline-alert-container lfr-alert-container"></div>
         
         	<liferay-ui:error exception="<%= AuthException.class %>" message="authentication-failed" />
-        	<liferay-ui:error key="verify-email-and-login-again" message="verify-email-and-login-again" />
-        	<liferay-ui:error key="email-not-exist" message="email-not-exist" />
+        	<liferay-ui:error exception="<%= UserActiveException.class %>" message="verify-email-and-login-again" />
+        	<liferay-ui:error exception="<%= NoSuchEmailAddressException.class %>" message="email-not-exist" />
         	
         	<aui:fieldset>
 	            <aui:input name="saveLastPath" type="hidden" value="<%= false %>" />
@@ -52,6 +54,12 @@
             <aui:button-row>
                 <aui:button cssClass="btn-lg" type="submit" value="sign-in" />
             </aui:button-row>
+            
+            <portlet:renderURL var="forgotPasswordURL" windowState="<%= WindowState.MAXIMIZED.toString() %>">
+				<portlet:param name="mvcRenderCommandName" value="/login/forgot_password" />
+			</portlet:renderURL>
+		
+			<aui:a href="<%= forgotPasswordURL.toString() %>" label="forgot-password" />
         </aui:form>
     </c:otherwise>
 </c:choose>

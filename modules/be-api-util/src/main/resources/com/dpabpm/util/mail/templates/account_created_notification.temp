@@ -1,8 +1,9 @@
-Dear [$TO_NAME$],<br />
-<br />
-Welcome! You recently created an account at [$PORTAL_URL$]. Please verify your email via <a>[$VERIFY_URL$]</a>. Enjoy!<br />
-<br />
-Sincerely,<br />
-[$FROM_NAME$]<br />
-[$FROM_ADDRESS$]<br />
+Dear [$TO_NAME$],<br/>
+<br/>
+Welcome! You recently created an account at [$PORTAL_URL$]. Please verify your email at <a href="[$VERIFY_URL$]">[$VERIFY_URL$]</a>. <br/>
+Enjoy!<br/>
+<br/>
+Sincerely,<br/>
+[$FROM_NAME$]<br/>
+[$FROM_ADDRESS$]<br/>
 [$PORTAL_URL$]

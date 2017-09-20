@@ -20,14 +20,14 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
  * @author phucnv
  * @date Sep 8, 2017
  */
-public class VerifyEmail {
+public class AccountEmailUtil {
 
 	/**
 	 * @param key
 	 * @return
 	 * @throws PortalException
 	 */
-	public static boolean verify(String key)
+	public static boolean verifyEmail(String key)
 		throws PortalException {
 
 		boolean isValidKey = false;
@@ -35,7 +35,6 @@ public class VerifyEmail {
 		Ticket ticket = TicketLocalServiceUtil.getTicket(key);
 
 		isValidKey = ticket.getExpirationDate().after(new Date());
-
 
 		if (isValidKey) {
 			AccountBusiness.verifyEmail(ticket.getClassPK());
@@ -81,5 +80,5 @@ public class VerifyEmail {
 		return true;
 	}
 
-	private static Log _log = LogFactoryUtil.getLog(VerifyEmail.class);
+	private static Log _log = LogFactoryUtil.getLog(AccountEmailUtil.class);
 }

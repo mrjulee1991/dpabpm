@@ -22,6 +22,7 @@ import com.dpabpm.account.model.Account;
 import com.dpabpm.account.service.base.AccountLocalServiceBaseImpl;
 import com.dpabpm.util.SendEmailMessageUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Company;
@@ -58,6 +59,39 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 	 * {@link com.dpabpm.account.service.AccountLocalServiceUtil} to access the
 	 * account local service.
 	 */
+
+	/**
+	 * @param email
+	 * @throws SystemException
+	 * @throws PortalException
+	 */
+	@Override
+	public void sendPassword(String email)
+		throws SystemException, PortalException {
+
+		Account account = accountPersistence.findByEmail(email);
+
+		User user = userLocalService.getUser(account.getMappingUserId());
+
+		String templateFileURL = SendEmailMessageUtil.PATH_SEND_PASSWORD_TEMP;
+
+		String[] replaceParameters = {
+			"[$TO_NAME$]", "[$PASSWORD$]"
+		};
+		String[] replaceVariables = {
+			user.getFullName(), user.getPasswordUnencrypted()
+		};
+
+		_log.info(
+			">>>>>>>>>>>>>>>> password: " + user.getPasswordUnencrypted());
+
+		String mailBody = SendEmailMessageUtil.getEmailBodyFromTemplateFile(
+			templateFileURL, replaceParameters, replaceVariables);
+
+		SendEmailMessageUtil.send(
+			SendEmailMessageUtil.SENDER_EMAIL_ADDRESS, user.getEmailAddress(),
+			SendEmailMessageUtil.SEND_PASSWORD_SUBJECT, mailBody, true);
+	}
 
 	/**
 	 * @param email
