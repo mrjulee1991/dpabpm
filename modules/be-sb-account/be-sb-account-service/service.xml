@@ -63,5 +63,8 @@
 		<!-- References -->
 
 		<reference entity="User" package-path="com.liferay.portal" />
+		<reference entity="Role" package-path="com.liferay.portal" />
+		<reference entity="Ticket" package-path="com.liferay.portal" />
+		<reference entity="Company" package-path="com.liferay.portal" />
 	</entity>
 </service-builder>

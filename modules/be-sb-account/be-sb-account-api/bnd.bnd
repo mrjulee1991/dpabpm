@@ -9,4 +9,6 @@ Export-Package: \
 	com.dpabpm.account.search,\
 	com.dpabpm.account.service.persistence,\
 	com.dpabpm.account.business,\
-	com.dpabpm.account.email
+	com.dpabpm.account.email,\
+	com.dpabpm.account.constants,\
+	com.dpabpm.account.util

@@ -24,6 +24,8 @@ import com.liferay.portal.kernel.exception.UserLockoutException;
 import com.liferay.portal.kernel.exception.UserReminderQueryException;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -40,18 +42,6 @@ import com.liferay.portal.util.PropsValues;
 }, service = MVCActionCommand.class)
 public class ForgotPasswordMVCActionCommand extends BaseMVCActionCommand {
 
-	/**
-	 * @param actionRequest
-	 * @throws CaptchaException
-	 */
-	protected void checkCaptcha(ActionRequest actionRequest)
-		throws CaptchaException {
-
-		if (PropsValues.CAPTCHA_CHECK_PORTAL_SEND_PASSWORD) {
-			CaptchaUtil.check(actionRequest);
-		}
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * @see com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand#
@@ -66,7 +56,7 @@ public class ForgotPasswordMVCActionCommand extends BaseMVCActionCommand {
 		try {
 			checkCaptcha(actionRequest);
 
-			sendPassword(actionRequest, actionResponse);
+			sendResetPasswordURL(actionRequest, actionResponse);
 		}
 		catch (Exception e) {
 			if (e instanceof CaptchaConfigurationException ||
@@ -97,16 +87,31 @@ public class ForgotPasswordMVCActionCommand extends BaseMVCActionCommand {
 
 	/**
 	 * @param actionRequest
+	 * @throws CaptchaException
+	 */
+	protected void checkCaptcha(ActionRequest actionRequest)
+		throws CaptchaException {
+
+		if (PropsValues.CAPTCHA_CHECK_PORTAL_SEND_PASSWORD) {
+			CaptchaUtil.check(actionRequest);
+		}
+	}
+
+	/**
+	 * @param actionRequest
 	 * @param actionResponse
 	 * @throws Exception
 	 */
-	protected void sendPassword(
+	protected void sendResetPasswordURL(
 		ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
 
+		ServiceContext serviceContext =
+			ServiceContextFactory.getInstance(actionRequest);
+
 		String email = ParamUtil.getString(actionRequest, "emailAddress");
 
-		AccountLocalServiceUtil.sendPassword(email);
+		AccountLocalServiceUtil._sendResetPasswordURL(email, serviceContext);
 
 		HttpServletRequest request =
 			PortalUtil.getHttpServletRequest(actionRequest);

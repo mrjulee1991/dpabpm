@@ -2,7 +2,7 @@
  * 
  */
 
-package com.dpabpm.account.email;
+package com.dpabpm.account.util;
 
 import java.util.Date;
 
@@ -20,29 +20,52 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
  * @author phucnv
  * @date Sep 8, 2017
  */
-public class AccountEmailUtil {
+public class AccountUtil {
+
+	/**
+	 * @param ticketKey
+	 * @return
+	 * @throws PortalException
+	 */
+	public static boolean checkTicketKeyResetPassword(String ticketKey)
+		throws PortalException {
+
+		boolean isValidKey = false;
+
+		Ticket ticket = TicketLocalServiceUtil.getTicket(ticketKey);
+
+		isValidKey = ticket.getExpirationDate().after(new Date());
+
+		// if (isValidKey) {
+		// // one-time-use ticket
+		// ticket.setExpirationDate(new Date(0));
+		// TicketLocalServiceUtil.updateTicket(ticket);
+		// }
+
+		return isValidKey;
+	}
 
 	/**
 	 * @param key
 	 * @return
 	 * @throws PortalException
 	 */
-	public static boolean verifyEmail(String key)
+	public static boolean verifyEmail(String ticketKey)
 		throws PortalException {
 
 		boolean isValidKey = false;
 
-		Ticket ticket = TicketLocalServiceUtil.getTicket(key);
+		Ticket ticket = TicketLocalServiceUtil.getTicket(ticketKey);
 
 		isValidKey = ticket.getExpirationDate().after(new Date());
 
 		if (isValidKey) {
 			AccountBusiness.verifyEmail(ticket.getClassPK());
-		}
 
-		// one-time-use ticket
-		ticket.setExpirationDate(new Date(0));
-		TicketLocalServiceUtil.updateTicket(ticket);
+			// one-time-use ticket
+			ticket.setExpirationDate(new Date(0));
+			TicketLocalServiceUtil.updateTicket(ticket);
+		}
 
 		return isValidKey;
 	}
@@ -80,5 +103,5 @@ public class AccountEmailUtil {
 		return true;
 	}
 
-	private static Log _log = LogFactoryUtil.getLog(AccountEmailUtil.class);
+	private static Log _log = LogFactoryUtil.getLog(AccountUtil.class);
 }

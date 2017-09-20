@@ -40,7 +40,7 @@ public class ForgotPasswordMVCRenderCommand implements MVCRenderCommand {
 
 		renderResponse.setTitle(themeDisplay.translate("forgot-password"));
 
-		return "/html/login/forgot_password.jsp";
+		return "/html/account/forgot_password.jsp";
 	}
 
 }

@@ -6,6 +6,8 @@ String emailRegister = ParamUtil.getString(request, AccountDisplayTerms.EMAIL);
 
 <liferay-portlet:actionURL name="createAccount" var="createAccountURL" />
 
+<div class="inline-alert-container lfr-alert-container"></div>
+
 <liferay-ui:success 
 	key="register-successfull.-url-verify-had-been-send-to-x" 
 	message="<%= LanguageUtil.format(resourceBundle, "register-successfull.-url-verify-had-been-send-to-x", emailRegister) %>"

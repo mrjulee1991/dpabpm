@@ -3,6 +3,8 @@
 <%@page import="javax.portlet.WindowState"%>
 <%@include file="init.jsp"%>
 
+<div class="inline-alert-container lfr-alert-container"></div>
+
 <c:choose>
     <c:when test="<%= themeDisplay.isSignedIn() %>">
 
@@ -31,8 +33,6 @@
         </portlet:actionURL>
 
         <aui:form action="<%= loginURL %>" autocomplete='on' cssClass="sign-in-form" method="post" name="loginForm">
-        
-        	<div class="inline-alert-container lfr-alert-container"></div>
         
         	<liferay-ui:error exception="<%= AuthException.class %>" message="authentication-failed" />
         	<liferay-ui:error exception="<%= UserActiveException.class %>" message="verify-email-and-login-again" />

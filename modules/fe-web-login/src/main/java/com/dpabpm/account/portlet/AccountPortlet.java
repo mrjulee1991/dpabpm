@@ -2,7 +2,7 @@
  * 
  */
 
-package com.dpabpm.register.portlet;
+package com.dpabpm.account.portlet;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -33,19 +33,20 @@ import com.liferay.portal.kernel.util.PortalUtil;
 @Component(immediate = true, property = {
 	"com.liferay.portlet.display-category=category.dpabpm.login",
 	"com.liferay.portlet.instanceable=true",
-	"javax.portlet.display-name=Account Registration",
-	"javax.portlet.init-param.template-path=/html/register/",
-	"javax.portlet.init-param.view-template=/html/register/register.jsp",
+	"javax.portlet.display-name=Account Portlet",
+	"javax.portlet.name=com_dpabpm_account_portelt_AccountPortlet",
+	"javax.portlet.init-param.template-path=/html/account/",
+	"javax.portlet.init-param.view-template=/html/account/view.jsp",
 	"javax.portlet.resource-bundle=content.Language_vi",
 	"javax.portlet.security-role-ref=power-user,user"
 }, service = Portlet.class)
-public class RegisterPortlet extends MVCPortlet {
+public class AccountPortlet extends MVCPortlet {
 
 	/**
 	 * @param actionRequest
 	 * @param actionResponse
 	 */
-	public void resendKey(
+	public void resendTicketKey(
 		ActionRequest actionRequest, ActionResponse actionResponse) {
 
 		try {
@@ -69,7 +70,7 @@ public class RegisterPortlet extends MVCPortlet {
 		}
 
 		actionResponse.setRenderParameter(
-			"mvcPath", "/html/register/verify_email.jsp");
+			"mvcPath", "/html/account/verify_email.jsp");
 	}
 
 	/**
@@ -115,7 +116,7 @@ public class RegisterPortlet extends MVCPortlet {
 		}
 
 		actionResponse.setRenderParameter(
-			"mvcPath", "/html/register/register.jsp");
+			"mvcPath", "/html/account/register.jsp");
 	}
 
 	private Log _log = LogFactoryUtil.getLog(this.getClass());

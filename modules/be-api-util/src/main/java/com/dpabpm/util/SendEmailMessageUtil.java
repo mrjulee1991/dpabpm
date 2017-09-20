@@ -31,17 +31,18 @@ public class SendEmailMessageUtil {
 
 	public static final String SENDER_EMAIL_ADDRESS = "nvp191@gmail.com";
 
-	public static final String CONFIRMATION_EMAIL_SUBJECT =
-		LanguageUtil.get(Locale.getDefault(), "confirmation-email-subject");
+	public static final String MAIL_SUBJECT_CONFIRMATION_EMAIL =
+		LanguageUtil.get(
+			Locale.getDefault(), "mail-subject-confirmation-email");
 
 	public static final String PATH_ACCOUNT_CREATED_NOTIFICATION_TEMP =
-		"/com/dpabpm/util/mail/templates/account_created_notification.temp";
+		"/com/dpabpm/util/mail/templates/create_account.temp";
 
-	public static final String SEND_PASSWORD_SUBJECT =
-		LanguageUtil.get(Locale.getDefault(), "send-password");
+	public static final String MAIL_SUBJECT_RESET_PASSWORD =
+		LanguageUtil.get(Locale.getDefault(), "mail-subject-reset-password");
 
-	public static final String PATH_SEND_PASSWORD_TEMP =
-		"/com/dpabpm/util/mail/templates/send_password.temp";
+	public static final String PATH_RESET_PASSWORD_TEMP =
+		"/com/dpabpm/util/mail/templates/reset_password.temp";
 
 	/**
 	 * @param templateFileURL

@@ -16,8 +16,11 @@ package com.dpabpm.account.service.impl;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
+import com.dpabpm.account.constants.AccountConstants;
+import com.dpabpm.account.exception.NoSuchAccountException;
 import com.dpabpm.account.model.Account;
 import com.dpabpm.account.service.base.AccountLocalServiceBaseImpl;
 import com.dpabpm.util.SendEmailMessageUtil;
@@ -26,14 +29,15 @@ import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.model.Role;
+import com.liferay.portal.kernel.model.RoleConstants;
 import com.liferay.portal.kernel.model.Ticket;
-import com.liferay.portal.kernel.model.TicketConstants;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
+import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.service.TicketLocalServiceUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
@@ -60,37 +64,22 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 	 * account local service.
 	 */
 
-	/**
-	 * @param email
-	 * @throws SystemException
-	 * @throws PortalException
-	 */
 	@Override
-	public void sendPassword(String email)
-		throws SystemException, PortalException {
+	public Account updatePassword(
+		String ticketKey, String password1, String password2)
+		throws NoSuchAccountException, PortalException {
 
-		Account account = accountPersistence.findByEmail(email);
+		Ticket ticket = ticketLocalService.getTicket(ticketKey);
 
-		User user = userLocalService.getUser(account.getMappingUserId());
+		Account account = accountPersistence.findByEmail(ticket.getExtraInfo());
 
-		String templateFileURL = SendEmailMessageUtil.PATH_SEND_PASSWORD_TEMP;
+		userLocalService.updatePassword(
+			account.getMappingUserId(), password1, password2, false);
 
-		String[] replaceParameters = {
-			"[$TO_NAME$]", "[$PASSWORD$]"
-		};
-		String[] replaceVariables = {
-			user.getFullName(), user.getPasswordUnencrypted()
-		};
+		ticket.setExpirationDate(new Date(0));
+		ticketLocalService.updateTicket(ticket);
 
-		_log.info(
-			">>>>>>>>>>>>>>>> password: " + user.getPasswordUnencrypted());
-
-		String mailBody = SendEmailMessageUtil.getEmailBodyFromTemplateFile(
-			templateFileURL, replaceParameters, replaceVariables);
-
-		SendEmailMessageUtil.send(
-			SendEmailMessageUtil.SENDER_EMAIL_ADDRESS, user.getEmailAddress(),
-			SendEmailMessageUtil.SEND_PASSWORD_SUBJECT, mailBody, true);
+		return account;
 	}
 
 	/**
@@ -204,17 +193,17 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 	 * @param serviceContext
 	 */
 	private Ticket _addTicket(
-		Account account, int overdueTime, int timeUnit,
+		Account account, int overdueTime, int timeUnit, int ticketType,
 		ServiceContext serviceContext) {
 
 		Calendar c = Calendar.getInstance();
 		c.setTime(new Date());
 		c.add(timeUnit, overdueTime);
 
-		return TicketLocalServiceUtil.addDistinctTicket(
+		return ticketLocalService.addTicket(
 			account.getCompanyId(), account.getClass().getName(),
-			account.getId(), TicketConstants.TYPE_PASSWORD, account.getEmail(),
-			c.getTime(), serviceContext);
+			account.getId(), ticketType, account.getEmail(), c.getTime(),
+			serviceContext);
 
 	}
 
@@ -229,18 +218,20 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 		throws PortalException {
 
 		// create ticket
-		Ticket ticket = _addTicket(account, 24, Calendar.HOUR, serviceContext);
+		Ticket ticket = _addTicket(
+			account, 24, Calendar.HOUR, AccountConstants.ACTION_VERIFY_EMAIL,
+			serviceContext);
 
 		String templateFileURL =
 			SendEmailMessageUtil.PATH_ACCOUNT_CREATED_NOTIFICATION_TEMP;
 
-		String verifyURL = _generateVerifyURL(account, ticket);
+		String verifyEmailURL = _generateVerifyEmailURL(account, ticket);
 
 		String[] replaceParameters = {
-			"[$TO_NAME$]", "[$VERIFY_URL$]"
+			"[$TO_NAME$]", "[$VERIFY_EMAIL_URL$]"
 		};
 		String[] replaceVariables = {
-			account.getFullName(), verifyURL
+			account.getFullName(), verifyEmailURL
 		};
 
 		String mailBody = SendEmailMessageUtil.getEmailBodyFromTemplateFile(
@@ -248,8 +239,46 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 
 		SendEmailMessageUtil.send(
 			SendEmailMessageUtil.SENDER_EMAIL_ADDRESS, account.getEmail(),
-			SendEmailMessageUtil.CONFIRMATION_EMAIL_SUBJECT, mailBody, true);
+			SendEmailMessageUtil.MAIL_SUBJECT_CONFIRMATION_EMAIL, mailBody,
+			true);
 
+	}
+
+	/**
+	 * @param email
+	 * @param serviceContext
+	 * @throws SystemException
+	 * @throws PortalException
+	 */
+	@Override
+	public void _sendResetPasswordURL(
+		String email, ServiceContext serviceContext)
+		throws SystemException, PortalException {
+
+		Account account = accountPersistence.findByEmail(email);
+
+		// create ticket
+		Ticket ticket = _addTicket(
+			account, 24, Calendar.HOUR, AccountConstants.ACTION_RESET_PASSWORD,
+			serviceContext);
+
+		String templateFileURL = SendEmailMessageUtil.PATH_RESET_PASSWORD_TEMP;
+
+		String resetPasswordURL = _gennerateResetPasswordURL(account, ticket);
+
+		String[] replaceParameters = {
+			"[$TO_NAME$]", "[$RESET_PASSWORD_URL$]"
+		};
+		String[] replaceVariables = {
+			account.getFullName(), resetPasswordURL
+		};
+
+		String mailBody = SendEmailMessageUtil.getEmailBodyFromTemplateFile(
+			templateFileURL, replaceParameters, replaceVariables);
+
+		SendEmailMessageUtil.send(
+			SendEmailMessageUtil.SENDER_EMAIL_ADDRESS, account.getEmail(),
+			SendEmailMessageUtil.MAIL_SUBJECT_RESET_PASSWORD, mailBody, true);
 	}
 
 	/**
@@ -258,18 +287,44 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 	 * @return
 	 * @throws PortalException
 	 */
-	private String _generateVerifyURL(Account account, Ticket ticket)
+	private String _gennerateResetPasswordURL(Account account, Ticket ticket)
 		throws PortalException {
 
 		Company company =
-			CompanyLocalServiceUtil.getCompany(account.getCompanyId());
+			companyLocalService.getCompany(account.getCompanyId());
 
 		StringBuilder portalURL = new StringBuilder(
 			PortalUtil.getPortalURL(
 				company.getVirtualHostname(),
 				PortalUtil.getPortalServerPort(false), false));
 
-		portalURL.append("/o/verify-email?key=" + ticket.getKey());
+		portalURL.append(
+			"/o/account?action=" + ticket.getType() + "&ticketKey=" +
+				ticket.getKey());
+
+		return portalURL.toString();
+	}
+
+	/**
+	 * @param account
+	 * @param ticket
+	 * @return
+	 * @throws PortalException
+	 */
+	private String _generateVerifyEmailURL(Account account, Ticket ticket)
+		throws PortalException {
+
+		Company company =
+			companyLocalService.getCompany(account.getCompanyId());
+
+		StringBuilder portalURL = new StringBuilder(
+			PortalUtil.getPortalURL(
+				company.getVirtualHostname(),
+				PortalUtil.getPortalServerPort(false), false));
+
+		portalURL.append(
+			"/o/account?" + "action=" + ticket.getType() + "&ticketKey=" +
+				ticket.getKey());
 
 		return portalURL.toString();
 	}
@@ -307,18 +362,72 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 
 		Locale locale = serviceContext.getLocale();
 
+		// get administrator user
+		Role adminRole = roleLocalService.getRole(
+			serviceContext.getCompanyId(), "Administrator");
+		long creatorUserId = 0;
+		List<User> adminUsers =
+			userLocalService.getRoleUsers(adminRole.getRoleId());
+
+		if (adminUsers.size() != 0) {
+			creatorUserId = adminUsers.get(0).getUserId();
+		}
+
+		// default role
+		long[] roleIds = null;
+
+		Role roleDefault = RoleLocalServiceUtil.getRole(
+			serviceContext.getCompanyId(), "DPABPM_DEFAULT_ROLE");
+
+		if (Validator.isNull(roleDefault)) {
+			_addRegularRole(
+				"DPABPM_DEFAULT_ROLE", adminUsers.get(0), serviceContext);
+		}
+
+		roleIds = new long[] {
+			roleDefault.getRoleId()
+		};
+
 		user = userLocalService.addUserWithWorkflow(
-			userId, companyId, false, password1, password2, true,
+			creatorUserId, companyId, false, password1, password2, true,
 			StringPool.BLANK, email, 0, StringPool.BLANK, locale, firstName,
 			StringPool.BLANK, lastName, 0, 0, gender > 0, birthdayMonth,
-			birthdayDay, birthdayYear, StringPool.BLANK, null, null, null, null,
-			false, serviceContext);
+			birthdayDay, birthdayYear, StringPool.BLANK, null, null, roleIds,
+			null, false, serviceContext);
 
 		user.setStatus(status);
 		user.setReminderQueryQuestion(StringPool.SLASH);
 		user.setReminderQueryAnswer(StringPool.SLASH);
 
 		return userPersistence.update(user);
+	}
+
+	/**
+	 * @param roleName
+	 * @param admin
+	 * @param serviceContext
+	 * @return
+	 */
+	private Role _addRegularRole(
+		String roleName, User admin, ServiceContext serviceContext) {
+
+		long roleId = counterLocalService.increment(Role.class.getName());
+
+		Role role = rolePersistence.create(roleId);
+
+		Date now = new Date();
+
+		role.setCompanyId(serviceContext.getCompanyId());
+		role.setUserId(admin.getUserId());
+		role.setUserName(admin.getFullName());
+		role.setCreateDate(now);
+		role.setModifiedDate(now);
+		role.setClassNameId(classNameLocalService.getClassNameId(Role.class));
+		role.setClassPK(roleId);
+		role.setName(roleName);
+		role.setType(RoleConstants.TYPE_REGULAR);
+
+		return rolePersistence.update(role);
 	}
 
 	private Log _log = LogFactoryUtil.getLog(this.getClass());

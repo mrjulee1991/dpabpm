@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.service.component.annotations.Component;
 
-import com.dpabpm.account.email.AccountEmailUtil;
+import com.dpabpm.account.util.AccountUtil;
 import com.liferay.portal.kernel.exception.NoSuchEmailAddressException;
 import com.liferay.portal.kernel.exception.UserActiveException;
 import com.liferay.portal.kernel.log.Log;
@@ -64,10 +64,10 @@ public class LoginMVCActionCommand extends BaseMVCActionCommand {
 		hideDefaultErrorMessage(actionRequest);
 		hideDefaultSuccessMessage(actionRequest);
 
-		if (!AccountEmailUtil.checkEmaiExisted(login)) {
+		if (!AccountUtil.checkEmaiExisted(login)) {
 			SessionErrors.add(actionRequest, NoSuchEmailAddressException.class);
 		}
-		else if (!AccountEmailUtil.checkEmailVerified(login)) {
+		else if (!AccountUtil.checkEmailVerified(login)) {
 			SessionErrors.add(actionRequest, UserActiveException.class);
 		}
 		else {

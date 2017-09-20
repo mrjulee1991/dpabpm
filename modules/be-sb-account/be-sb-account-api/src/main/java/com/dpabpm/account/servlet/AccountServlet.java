@@ -2,7 +2,7 @@
  * 
  */
 
-package com.dpabpm.account.email;
+package com.dpabpm.account.servlet;
 
 import java.io.IOException;
 
@@ -14,22 +14,27 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.service.component.annotations.Component;
 
+import com.dpabpm.account.constants.AccountConstants;
+import com.dpabpm.account.util.AccountUtil;
+import com.liferay.portal.kernel.exception.NoSuchTicketException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 
 /**
  * @author phucnv
- * @date Sep 8, 2017
+ * @date Sep 20, 2017
  */
 @Component(immediate = true, property = {
 	"osgi.http.whiteboard.context.path=/",
 	"osgi.http.whiteboard.servlet.name=com.dpabpm.util.mail.VerifyEmailServlet",
-	"osgi.http.whiteboard.servlet.pattern=/verify-email",
+	"osgi.http.whiteboard.servlet.pattern=/account",
 }, service = Servlet.class)
-public class VerifyEmailServlet extends HttpServlet {
+public class AccountServlet extends HttpServlet {
 
-	// Servlet URL : http://localhost:8080/o/verify-email?key=xxxxxxxxxx
+	// Servlet URL : http://localhost:8080/o/account?key=xxxxxxxxxx
 
 	/**
 	 * 
@@ -46,20 +51,45 @@ public class VerifyEmailServlet extends HttpServlet {
 		HttpServletRequest request, HttpServletResponse response)
 		throws ServletException, IOException {
 
-		String key = request.getParameter("key");
+		String ticketKey =
+			GetterUtil.getString(request.getParameter("ticketKey"));
 
-		boolean isValidKey = false;
+		int action = GetterUtil.getInteger(request.getParameter("action"));
+
+		boolean isValidTicketKey = false;
 
 		try {
-			isValidKey = AccountEmailUtil.verifyEmail(key);
+			if (action == AccountConstants.ACTION_VERIFY_EMAIL) {
+
+				isValidTicketKey = AccountUtil.verifyEmail(ticketKey);
+
+			}
+			else if (action == AccountConstants.ACTION_RESET_PASSWORD) {
+				isValidTicketKey =
+					AccountUtil.checkTicketKeyResetPassword(ticketKey);
+			}
+
+			// goto
+			// fe-web-login/src/main/resources/META-INF/resources/html/account/view.jsp
+			response.sendRedirect(
+				"/web/guest/account?action=" + action + "&isValidTicketKey=" +
+					isValidTicketKey + "&ticketKey=" + ticketKey);
 		}
 		catch (PortalException e) {
 			_log.error(e);
-		}
 
-		response.sendRedirect(
-			"/web/guest/register?action=verify_email&isValidKey=" + isValidKey +
-				"&key=" + key);
+			if (e instanceof NoSuchTicketException) {
+				response.sendRedirect(
+					"/web/guest/account?action=" + action +
+						"&isValidTicketKey=" + isValidTicketKey +
+						"&ticketKey=" + ticketKey);
+			}
+			else {
+				// redirect to home page
+				response.sendRedirect(PortalUtil.getPortalURL(request));
+			}
+
+		}
 
 		// super.doGet(request, response);
 	}
@@ -78,5 +108,4 @@ public class VerifyEmailServlet extends HttpServlet {
 	}
 
 	private Log _log = LogFactoryUtil.getLog(this.getClass());
-
 }
