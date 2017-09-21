@@ -14,7 +14,7 @@ import javax.portlet.ActionResponse;
 import org.osgi.service.component.annotations.Component;
 
 import com.dpabpm.account.search.AccountDisplayTerms;
-import com.dpabpm.util.FileUploadUtil;
+import com.dpabpm.util.FileUtil;
 import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
@@ -68,7 +68,7 @@ public class ProfileMVCActionCommand extends BaseMVCActionCommand {
 
 		String description = themeDisplay.getUser().getFullName() + "'s avatar";
 
-		FileEntry fileEntry = FileUploadUtil.uploadFile(
+		FileEntry fileEntry = FileUtil.uploadFile(
 			serviceContext.getUserId(), serviceContext.getCompanyId(),
 			serviceContext.getScopeGroupId(), is, fileName, mimeType,
 			file.length(), AccountDisplayTerms.AVATAR, description,

@@ -24,7 +24,7 @@ import com.liferay.portal.kernel.util.Validator;
  * @author phucnv
  * @date Sep 21, 2017
  */
-public class FileUploadUtil {
+public class FileUtil {
 
 	/**
 	 * @param userId
