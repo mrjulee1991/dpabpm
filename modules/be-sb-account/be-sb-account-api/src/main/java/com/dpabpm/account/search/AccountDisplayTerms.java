@@ -46,6 +46,8 @@ public class AccountDisplayTerms extends DisplayTerms {
 	public static final String PASSWORD_1 = "password1";
 	public static final String PASSWORD_2 = "password2";
 
+	public static final String AVATAR = "avatar";
+
 	/**
 	 * @param request
 	 */

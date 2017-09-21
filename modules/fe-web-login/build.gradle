@@ -12,5 +12,6 @@ dependencies {
 	compileOnly group: 'org.osgi', name: 'org.osgi.core', version: '4.3.0'
 	compileOnly group: 'com.liferay.portal', name: 'com.liferay.portal.impl', version: '2.0.0'
 	
+	compileOnly project(":modules:be-api-util")
 	compileOnly project(":modules:be-sb-account:be-sb-account-api")
 }

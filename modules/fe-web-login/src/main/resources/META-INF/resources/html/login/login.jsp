@@ -21,6 +21,12 @@
         <p><liferay-ui:message key="<%= LanguageUtil.format(resourceBundle, "you-are-signed-in-as-x", signedInAs) %>" /></p>
         
         <p><aui:button href="/c/portal/logout" value="sign-out" /></p>
+        
+        <portlet:renderURL var="profileURL" windowState="<%= WindowState.MAXIMIZED.toString() %>">
+			<portlet:param name="mvcRenderCommandName" value="/account/profile" />
+		</portlet:renderURL>
+        
+        <aui:a href="<%= profileURL %>" label="profile" />
     </c:when>
     <c:otherwise>
     
@@ -58,8 +64,9 @@
             <portlet:renderURL var="forgotPasswordURL" windowState="<%= WindowState.MAXIMIZED.toString() %>">
 				<portlet:param name="mvcRenderCommandName" value="/login/forgot_password" />
 			</portlet:renderURL>
-		
-			<aui:a href="<%= forgotPasswordURL.toString() %>" label="forgot-password" />
+			
+			<aui:a href="<%= forgotPasswordURL %>" label="forgot-password" />
+			
         </aui:form>
     </c:otherwise>
 </c:choose>
