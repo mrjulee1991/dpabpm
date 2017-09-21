@@ -14,29 +14,81 @@
 
 package com.dpabpm.mappingfile.service.impl;
 
+import java.util.Date;
+
+import com.dpabpm.mappingfile.model.MappingFile;
+import com.dpabpm.mappingfile.service.base.MappingFileLocalServiceBaseImpl;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
+
 import aQute.bnd.annotation.ProviderType;
 
-import com.dpabpm.mappingfile.service.base.MappingFileLocalServiceBaseImpl;
-
 /**
- * The implementation of the mapping file local service.
- *
- * <p>
- * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link com.dpabpm.mappingfile.service.MappingFileLocalService} interface.
- *
- * <p>
- * This is a local service. Methods of this service will not have security checks based on the propagated JAAS credentials because this service can only be accessed from within the same VM.
- * </p>
+ * The implementation of the mapping file local service. <p> All custom service
+ * methods should be put in this class. Whenever methods are added, rerun
+ * ServiceBuilder to copy their definitions into the
+ * {@link com.dpabpm.mappingfile.service.MappingFileLocalService} interface. <p>
+ * This is a local service. Methods of this service will not have security
+ * checks based on the propagated JAAS credentials because this service can only
+ * be accessed from within the same VM. </p>
  *
  * @author phucnv
  * @see MappingFileLocalServiceBaseImpl
  * @see com.dpabpm.mappingfile.service.MappingFileLocalServiceUtil
  */
 @ProviderType
-public class MappingFileLocalServiceImpl extends MappingFileLocalServiceBaseImpl {
+public class MappingFileLocalServiceImpl
+	extends MappingFileLocalServiceBaseImpl {
 	/*
-	 * NOTE FOR DEVELOPERS:
-	 *
-	 * Never reference this class directly. Always use {@link com.dpabpm.mappingfile.service.MappingFileLocalServiceUtil} to access the mapping file local service.
+	 * NOTE FOR DEVELOPERS: Never reference this class directly. Always use
+	 * {@link com.dpabpm.mappingfile.service.MappingFileLocalServiceUtil} to
+	 * access the mapping file local service.
 	 */
+
+	/**
+	 * @param tableName
+	 * @param dataPk
+	 * @param fileEntryId
+	 * @param attFileTypeCode
+	 * @param fileDownloadURL
+	 * @param currentUse
+	 * @param serviceContext
+	 * @return
+	 */
+	@Override
+	public MappingFile createMappingFile(
+		String tableName, String dataPk, long fileEntryId,
+		String attFileTypeCode, String fileDownloadURL, boolean isCurrentUse,
+		ServiceContext serviceContext) {
+
+		long mappingFileId =
+			counterLocalService.increment(MappingFile.class.getName());
+
+		MappingFile mappingFile = mappingFilePersistence.create(mappingFileId);
+
+		User user = userLocalService.fetchUser(serviceContext.getUserId());
+
+		Date now = new Date();
+
+		mappingFile.setUuid(PortalUUIDUtil.generate());
+
+		mappingFile.setGroupId(serviceContext.getScopeGroupId());
+		mappingFile.setCompanyId(serviceContext.getCompanyId());
+		mappingFile.setUserId(user.getUserId());
+		mappingFile.setUserName(user.getFullName());
+		mappingFile.setCreateDate(now);
+		mappingFile.setModifiedDate(now);
+
+		mappingFile.setTableName(tableName);
+		mappingFile.setDataPk(dataPk);
+		mappingFile.setFileEntryId(fileEntryId);
+		mappingFile.setAttFileTypeCode(attFileTypeCode);
+		mappingFile.setFileDownloadURL(fileDownloadURL);
+		mappingFile.setIsCurrentUse(isCurrentUse);
+
+		mappingFile = mappingFilePersistence.update(mappingFile);
+
+		return mappingFile;
+	}
 }

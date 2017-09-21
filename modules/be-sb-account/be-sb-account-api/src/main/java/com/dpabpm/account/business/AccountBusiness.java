@@ -51,16 +51,14 @@ public class AccountBusiness {
 	 * @throws PortalException
 	 */
 	public static Account createAccount(
-		long groupId, long companyId, long userId, String userName,
 		String lastName, String firstName, String fullName, int gender,
 		Date birthdate, String address, String telNo, String email,
 		String password1, String password2, ServiceContext serviceContext)
 		throws PortalException {
 
 		return AccountLocalServiceUtil.createAccount(
-			groupId, companyId, userId, userName, lastName, firstName, fullName,
-			gender, birthdate, address, telNo, email, password1, password2,
-			serviceContext);
+			lastName, firstName, fullName, gender, birthdate, address, telNo,
+			email, password1, password2, serviceContext);
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(AccountBusiness.class);

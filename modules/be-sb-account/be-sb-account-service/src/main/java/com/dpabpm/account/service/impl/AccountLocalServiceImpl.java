@@ -94,6 +94,17 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 	}
 
 	/**
+	 * @param mappingUserId
+	 * @return
+	 * @throws NoSuchAccountException
+	 */
+	public Account findByMappingUserId(long mappingUserId)
+		throws NoSuchAccountException {
+
+		return accountPersistence.findByMappingUserId(mappingUserId);
+	}
+
+	/**
 	 * @param accountId
 	 * @return
 	 * @throws PortalException
@@ -139,7 +150,6 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 	 */
 	@Override
 	public Account createAccount(
-		long groupId, long companyId, long userId, String userName,
 		String lastName, String firstName, String fullName, int gender,
 		Date birthdate, String address, String telNo, String email,
 		String password1, String password2, ServiceContext serviceContext)
@@ -147,16 +157,19 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 
 		// create account
 		long id = counterLocalService.increment(Account.class.getName());
+
 		Account account = accountPersistence.create(id);
+
+		User user = userLocalService.fetchUser(serviceContext.getUserId());
 
 		Date now = new Date();
 
 		account.setUuid(PortalUUIDUtil.generate());
 
-		account.setGroupId(groupId);
-		account.setCompanyId(companyId);
-		account.setUserId(userId);
-		account.setUserName(userName);
+		account.setGroupId(serviceContext.getScopeGroupId());
+		account.setCompanyId(serviceContext.getCompanyId());
+		account.setUserId(user.getUserId());
+		account.setUserName(user.getFullName());
 		account.setCreateDate(now);
 		account.setModifiedDate(now);
 
@@ -172,8 +185,9 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 
 		// create mapping user
 		User mappingUser = _addUserWithWorkflow(
-			companyId, userId, userName, lastName, firstName, gender, birthdate,
-			email, account.getStatus(), password1, password2, serviceContext);
+			serviceContext.getCompanyId(), user.getUserId(), user.getFullName(),
+			lastName, firstName, gender, birthdate, email, account.getStatus(),
+			password1, password2, serviceContext);
 
 		account.setMappingUserId(mappingUser.getUserId());;
 

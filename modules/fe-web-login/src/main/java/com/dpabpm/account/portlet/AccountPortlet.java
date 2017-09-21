@@ -96,8 +96,6 @@ public class AccountPortlet extends MVCPortlet {
 				PortalUtil.getHttpServletRequest(actionRequest));
 
 			AccountBusiness.createAccount(
-				accountTerms.getGroupId(), accountTerms.getCompanyId(),
-				accountTerms.getUserId(), accountTerms.getUserName(),
 				accountTerms.getLastName(), accountTerms.getFirstName(),
 				accountTerms.getFullName(), accountTerms.getGender(),
 				accountTerms.getBirthdate(), accountTerms.getAddress(),

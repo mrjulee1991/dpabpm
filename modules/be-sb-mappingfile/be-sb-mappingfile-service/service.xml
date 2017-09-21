@@ -27,9 +27,10 @@
 		<!-- Other fields -->
 
 		<column name="tableName" type="String" />
-		<column name="dataPk" type="long" />			 <!-- primary key in tableName -->
+		<column name="dataPk" type="String" />			 <!-- primary key in tableName -->
 		<column name="fileEntryId" type="long" />
 		<column name="attFileTypeCode" type="String" />
+		<column name="isCurrentUse" type="boolean" />
 
 		<!-- Order -->
 
@@ -40,6 +41,11 @@
 		<!-- Finder methods -->
 
 		<finder name="T_D" return-type="MappingFile">
+			<finder-column name="tableName" />
+			<finder-column name="dataPk" />
+		</finder>
+		
+		<finder name="T_D_InUse" return-type="MappingFile" where="isCurrentUse==1">
 			<finder-column name="tableName" />
 			<finder-column name="dataPk" />
 		</finder>

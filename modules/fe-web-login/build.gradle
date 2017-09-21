@@ -14,4 +14,5 @@ dependencies {
 	
 	compileOnly project(":modules:be-api-util")
 	compileOnly project(":modules:be-sb-account:be-sb-account-api")
+	compileOnly project(":modules:be-sb-mappingfile:be-sb-mappingfile-api")
 }
