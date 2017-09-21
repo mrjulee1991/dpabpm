@@ -33,7 +33,6 @@ import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.RoleConstants;
 import com.liferay.portal.kernel.model.Ticket;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringPool;
@@ -374,17 +373,15 @@ public class AccountLocalServiceImpl extends AccountLocalServiceBaseImpl {
 		}
 
 		// default role
-		long[] roleIds = null;
-
-		Role roleDefault = RoleLocalServiceUtil.getRole(
+		Role roleDefault = roleLocalService.fetchRole(
 			serviceContext.getCompanyId(), "DPABPM_DEFAULT_ROLE");
 
 		if (Validator.isNull(roleDefault)) {
-			_addRegularRole(
+			roleDefault = _addRegularRole(
 				"DPABPM_DEFAULT_ROLE", adminUsers.get(0), serviceContext);
 		}
 
-		roleIds = new long[] {
+		long[] roleIds = new long[] {
 			roleDefault.getRoleId()
 		};
 

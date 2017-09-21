@@ -45,9 +45,11 @@ public class AccountPortlet extends MVCPortlet {
 	/**
 	 * @param actionRequest
 	 * @param actionResponse
+	 * @throws Exception
 	 */
 	public void resendTicketKey(
-		ActionRequest actionRequest, ActionResponse actionResponse) {
+		ActionRequest actionRequest, ActionResponse actionResponse)
+		throws Exception {
 
 		try {
 			ServiceContext serviceContext =
@@ -67,18 +69,24 @@ public class AccountPortlet extends MVCPortlet {
 		}
 		catch (PortalException e) {
 			_log.error(e);
+
+			throw new Exception();
+		}
+		finally {
+			actionResponse.setRenderParameter(
+				"mvcPath", "/html/account/verify_email.jsp");
 		}
 
-		actionResponse.setRenderParameter(
-			"mvcPath", "/html/account/verify_email.jsp");
 	}
 
 	/**
 	 * @param request
 	 * @param response
+	 * @throws Exception
 	 */
 	public void createAccount(
-		ActionRequest actionRequest, ActionResponse actionResponse) {
+		ActionRequest actionRequest, ActionResponse actionResponse)
+		throws Exception {
 
 		try {
 			ServiceContext serviceContext =
@@ -113,10 +121,15 @@ public class AccountPortlet extends MVCPortlet {
 					actionRequest,
 					UserEmailAddressException.MustNotBeDuplicate.class);
 			}
+			else {
+				throw new Exception();
+			}
+		}
+		finally {
+			actionResponse.setRenderParameter(
+				"mvcPath", "/html/account/register.jsp");
 		}
 
-		actionResponse.setRenderParameter(
-			"mvcPath", "/html/account/register.jsp");
 	}
 
 	private Log _log = LogFactoryUtil.getLog(this.getClass());
