@@ -82,7 +82,7 @@ public class ProfileMVCActionCommand extends BaseMVCActionCommand {
 
 		MappingFIleBussiness.createMappingFile(
 			Account.class.getName(), account.getUuid(),
-			fileEntry.getFileEntryId(), AccountDisplayTerms.AVATAR, "", true,
+			fileEntry.getFileEntryId(), AccountDisplayTerms.AVATAR, true,
 			serviceContext);
 	}
 

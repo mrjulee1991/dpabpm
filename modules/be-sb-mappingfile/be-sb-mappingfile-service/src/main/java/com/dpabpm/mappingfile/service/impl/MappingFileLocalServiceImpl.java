@@ -59,7 +59,7 @@ public class MappingFileLocalServiceImpl
 	@Override
 	public MappingFile createMappingFile(
 		String tableName, String dataPk, long fileEntryId,
-		String attFileTypeCode, String fileDownloadURL, boolean isCurrentUse,
+		String attFileTypeCode, boolean isCurrentUse,
 		ServiceContext serviceContext) {
 
 		long mappingFileId =
@@ -84,7 +84,6 @@ public class MappingFileLocalServiceImpl
 		mappingFile.setDataPk(dataPk);
 		mappingFile.setFileEntryId(fileEntryId);
 		mappingFile.setAttFileTypeCode(attFileTypeCode);
-		mappingFile.setFileDownloadURL(fileDownloadURL);
 		mappingFile.setIsCurrentUse(isCurrentUse);
 
 		mappingFile = mappingFilePersistence.update(mappingFile);

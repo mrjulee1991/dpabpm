@@ -26,11 +26,11 @@ public class MappingFIleBussiness {
 	 */
 	public static MappingFile createMappingFile(
 		String tableName, String dataPk, long fileEntryId,
-		String attFileTypeCode, String fileDownloadURL, boolean isCurrentUse,
+		String attFileTypeCode, boolean isCurrentUse,
 		ServiceContext serviceContext) {
 
 		return MappingFileLocalServiceUtil.createMappingFile(
-			tableName, dataPk, fileEntryId, attFileTypeCode, fileDownloadURL,
-			isCurrentUse, serviceContext);
+			tableName, dataPk, fileEntryId, attFileTypeCode, isCurrentUse,
+			serviceContext);
 	}
 }
